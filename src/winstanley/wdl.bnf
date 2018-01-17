@@ -71,7 +71,7 @@ pair_expression ::= PAIR_TYPE LSQUARE type_e COMMA type_e RSQUARE
 
 string_literal ::= QUOTE (QUOTE_STRING_CHAR|ESCAPE_SEQUENCE)* QUOTE
 
-expression ::= ( function_call | object_literal | map_literal | array_literal | value |
+expression ::= ( function_call | object_literal | map_literal | array_literal | fqn | value |
                  LPAREN expression (COMMA expression)? RPAREN | LOGICAL_NOT expression | PLUS expression | DASH expression |
                  IF expression THEN expression ELSE expression
                ) array_or_member_access_suffix* expression_dash?
