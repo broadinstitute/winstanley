@@ -23,7 +23,7 @@ class WdlAnnotator extends Annotator {
         }
       }
     case value: WdlCallableLookup =>
-      // TODO (Issue 63): Work out a better way to verify that imports exist and (if local) that files inside them exist.
+      // TODO (Issue 63): Work out a better way to verify that imports exist and (if local?) that an appropriate task/workflow inside them exist.
       // For now to avoid error highlights, I'll just suppress errors for things that look like FQNs
       if (value.getFullyQualifiedName.getNode.getChildren(null).length == 1) {
         value.getFullyQualifiedName.getIdentifierNode foreach { identifier =>
