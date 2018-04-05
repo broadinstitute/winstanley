@@ -53,7 +53,8 @@ DASH="-"
 ASTERISK=\*
 SLASH=\/
 PERCENT=\%
-COMMAND_VAR_OPENER=\$\{
+NEW_PLACEHOLDER_OPENER=\~\{
+DEPRECATED_PLACEHOLDER_OPENER=\$\{
 LOGICAL_NOT="!"
 COMMA=","
 DOUBLE_PIPE=\|\|
@@ -64,6 +65,7 @@ MORE_THAN=\>
 MORE_EQUAL=\>\=
 COMMENT=("#")[^\r\n]*
 IMPORT="import"
+ALIAS="alias"
 WORKFLOW="workflow"
 CALL="call"
 AS="as"
@@ -86,9 +88,13 @@ ATTR_SEP="sep"
 ATTR_DEFAULT="default"
 ATTR_TRUE="true="|"true ="
 ATTR_FALSE="false="|"false ="
+VERSION="version"
+VERSION_IDENTIFIER="draft-3"
+STRUCT="struct"
 
 %state WAITING_WORKFLOW_IDENTIFIER_DECL
 %state WAITING_TASK_IDENTIFIER_DECL
+%state WAITING_STRUCT_DECL
 %state WAITING_COMMAND
 %state COMMAND1
 %state COMMAND2
@@ -111,8 +117,9 @@ ATTR_FALSE="false="|"false ="
 <WAITING_COMMAND> {TRIPLE_ANGLE_OPEN}                  { yybegin(COMMAND2); return WdlTypes.COMMAND_DELIMITER_OPEN; }
 <COMMAND1> {RBRACE}                                    { yybegin(YYINITIAL); return WdlTypes.COMMAND_DELIMITER_CLOSE; }
 <COMMAND2> {TRIPLE_ANGLE_CLOSE}                        { yybegin(YYINITIAL); return WdlTypes.COMMAND_DELIMITER_CLOSE; }
-<COMMAND1> {COMMAND_VAR_OPENER}                        { yybegin(COMMAND1_VAR); return WdlTypes.COMMAND_VAR_OPENER; }
-<COMMAND2> {COMMAND_VAR_OPENER}                        { yybegin(COMMAND2_VAR); return WdlTypes.COMMAND_VAR_OPENER; }
+<COMMAND1> {DEPRECATED_PLACEHOLDER_OPENER}             { yybegin(COMMAND1_VAR); return WdlTypes.COMMAND_VAR_OPENER; }
+<COMMAND1> {NEW_PLACEHOLDER_OPENER}                    { yybegin(COMMAND1_VAR); return WdlTypes.COMMAND_VAR_OPENER; }
+<COMMAND2> {NEW_PLACEHOLDER_OPENER}                    { yybegin(COMMAND2_VAR); return WdlTypes.COMMAND_VAR_OPENER; }
 <COMMAND1_VAR> {RBRACE}                                { yybegin(COMMAND1); return WdlTypes.RBRACE; }
 <COMMAND2_VAR> {RBRACE}                                { yybegin(COMMAND2); return WdlTypes.RBRACE; }
 <COMMAND1_VAR, COMMAND2_VAR> {ATTR_DEFAULT}            { return WdlTypes.COMMAND_ATTR_DEFAULT; }
@@ -171,6 +178,9 @@ ATTR_FALSE="false="|"false ="
 <YYINITIAL, COMMAND1_VAR, COMMAND2_VAR> {ELSE}         { return WdlTypes.ELSE; }
 <YYINITIAL> {COMMENT}                                  { return WdlTypes.COMMENT; }
 <YYINITIAL> {IMPORT}                                   { return WdlTypes.IMPORT; }
+<YYINITIAL> {ALIAS}                                    { return WdlTypes.ALIAS; }
+<YYINITIAL> {VERSION}                                  { return WdlTypes.VERSION; }
+<YYINITIAL> {VERSION_IDENTIFIER}                       { return WdlTypes.VERSION_IDENTIFIER; }
 <YYINITIAL> {WORKFLOW}                                 { yybegin(WAITING_WORKFLOW_IDENTIFIER_DECL); return WdlTypes.WORKFLOW; }
 <WAITING_WORKFLOW_IDENTIFIER_DECL> {IDENTIFIER}        { yybegin(YYINITIAL); return WdlTypes.WORKFLOW_IDENTIFIER_DECL; }
 <YYINITIAL> {CALL}                                     { return WdlTypes.CALL; }
@@ -181,6 +191,8 @@ ATTR_FALSE="false="|"false ="
 <YYINITIAL> {SCATTER}                                  { return WdlTypes.SCATTER; }
 <YYINITIAL> {IN}                                       { return WdlTypes.IN; }
 <YYINITIAL> {TASK}                                     { yybegin(WAITING_TASK_IDENTIFIER_DECL); return WdlTypes.TASK; }
+<YYINITIAL> {STRUCT}                                   { yybegin(WAITING_STRUCT_DECL); return WdlTypes.STRUCT; }
+<WAITING_STRUCT_DECL> {IDENTIFIER}                     { yybegin(YYINITIAL); return WdlTypes.STRUCT_IDENTIFIER_DECL; }
 <WAITING_TASK_IDENTIFIER_DECL> {IDENTIFIER}            { yybegin(YYINITIAL); return WdlTypes.TASK_IDENTIFIER_DECL; }
 <YYINITIAL> {RUNTIME}                                  { return WdlTypes.RUNTIME; }
 <YYINITIAL> {PARAMETER_META}                           { return WdlTypes.PARAMETER_META; }

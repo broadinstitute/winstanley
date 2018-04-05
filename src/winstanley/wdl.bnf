@@ -17,20 +17,29 @@
 
 // Regenerate from IntelliJ using Grammar-Kit plugin and COMMAND-SHIFT-G
 
-wdlFile ::= import_stmt* (task_block|workflow_block|COMMENT)*
+wdlFile ::= draft3File | draft2File
+draft2File ::= import_stmt* (task_block|workflow_block|COMMENT)*
+draft3File ::= VERSION VERSION_IDENTIFIER import_stmt* (task_block|workflow_block|struct_block|COMMENT)*
 
-import_stmt ::= IMPORT string_literal import_namespace?
+import_stmt ::= IMPORT string_literal import_namespace? import_alias*
 import_namespace ::= AS IDENTIFIER
+import_alias ::= ALIAS IDENTIFIER AS IDENTIFIER
+
+struct_block ::= STRUCT STRUCT_IDENTIFIER_DECL LBRACE struct_entry* RBRACE
+struct_entry ::= type_e IDENTIFIER {mixin="winstanley.psi.impl.WdlNamedElementImpl" implements="winstanley.psi.WdlNamedElement" methods=[getName getNameIdentifier setName]}
 
 workflow_block ::= WORKFLOW WORKFLOW_IDENTIFIER_DECL LBRACE wf_body_element* RBRACE
-wf_body_element ::= call_block | declaration | while_loop | if_stmt | scatter_block | wf_outputs
+wf_body_element ::= call_block | input_block | declaration | while_loop | if_stmt | scatter_block | wf_outputs
+
+input_block ::= INPUT LBRACE input_declaration* RBRACE
+input_declaration ::= type_e IDENTIFIER {mixin="winstanley.psi.impl.WdlNamedElementImpl" implements="winstanley.psi.WdlNamedElement" methods=[getName getNameIdentifier setName]}
 
 callable_lookup ::= fully_qualified_name {mixin="winstanley.psi.impl.WdlNamedElementImpl" implements="winstanley.psi.WdlNamedElement" methods=[getName getNameIdentifier setName getReferences]}
-call_block ::= CALL callable_lookup alias? (LBRACE call_body RBRACE)?
+call_block ::= CALL callable_lookup call_alias? (LBRACE call_body RBRACE)?
 call_body ::= declaration* call_input*
 call_input ::= INPUT COLON (mapping (COMMA mapping)*)?
 mapping ::= IDENTIFIER EQUAL expression
-alias ::= AS IDENTIFIER {mixin="winstanley.psi.impl.WdlNamedElementImpl" implements="winstanley.psi.WdlNamedElement" methods=[getName getNameIdentifier setName]}
+call_alias ::= AS IDENTIFIER {mixin="winstanley.psi.impl.WdlNamedElementImpl" implements="winstanley.psi.WdlNamedElement" methods=[getName getNameIdentifier setName]}
 wf_outputs ::= OUTPUT LBRACE wf_output* RBRACE
 wf_output ::= wf_output_declaration | wf_output_wildcard_statement
 wf_output_declaration ::= type_e IDENTIFIER EQUAL expression {mixin="winstanley.psi.impl.WdlNamedElementImpl" implements="winstanley.psi.WdlNamedElement" methods=[getName getNameIdentifier setName]}
@@ -43,8 +52,8 @@ scatter_declaration ::= SCATTER LPAREN IDENTIFIER IN expression RPAREN {mixin="w
 scatter_block ::= scatter_declaration LBRACE wf_body_element* RBRACE
 
 task_declaration ::= TASK_IDENTIFIER_DECL {mixin="winstanley.psi.impl.WdlNamedTaskElementImpl" implements="winstanley.psi.WdlNamedTaskElement" methods=[getName getNameIdentifier setName]}
-task_block ::= TASK task_declaration LBRACE declaration* sections* RBRACE
-sections ::= command_block|task_outputs|runtime_block|parameter_meta_block|meta_block
+task_block ::= TASK task_declaration LBRACE task_section* RBRACE
+task_section ::= declaration|input_block|command_block|task_outputs|runtime_block|parameter_meta_block|meta_block
 
 command_block ::= COMMAND COMMAND_DELIMITER_OPEN (COMMAND_CHAR|command_var)* COMMAND_DELIMITER_CLOSE
 command_var ::= COMMAND_VAR_OPENER command_var_option* expression RBRACE
@@ -67,7 +76,7 @@ setter ::= EQUAL expression
 map ::= LBRACE kv* RBRACE
 kv ::= IDENTIFIER COLON expression
 
-type_e ::= (OBJECT_TYPE | PRIMITIVE_TYPE | map_expression | array_expression | pair_expression ) QMARK*
+type_e ::= (OBJECT_TYPE | PRIMITIVE_TYPE | map_expression | array_expression | pair_expression | IDENTIFIER ) QMARK*
 array_expression ::= ARRAY_TYPE LSQUARE type_e RSQUARE PLUS?
 map_expression ::= MAP_TYPE LSQUARE type_e COMMA type_e RSQUARE
 pair_expression ::= PAIR_TYPE LSQUARE type_e COMMA type_e RSQUARE

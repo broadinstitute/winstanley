@@ -46,6 +46,7 @@ object WdlImplicits {
       def expandChild(child: PsiElement): Set[WdlNamedElement] = child match {
         case d: WdlDeclaration => Set(d)
         case b: WdlWfBodyElement if b.getDeclaration != null => Set(b.getDeclaration)
+        case b: WdlInputDeclaration => Set(b)
         case b: WdlWfBodyElement if b.getCallBlock != null => findAliasOrCallDeclaration(b.getCallBlock)
         case other => other.findReferencesInInnerScopes
       }
@@ -53,7 +54,7 @@ object WdlImplicits {
     }
 
     private def findAliasOrCallDeclaration(callBlock: WdlCallBlock): Set[WdlNamedElement] = {
-      Option(callBlock.getAlias) match {
+      Option(callBlock.getCallAlias) match {
         case Some(alias) => Set(alias)
         case None => Set(callBlock.getCallableLookup)
       }
@@ -69,7 +70,11 @@ object WdlImplicits {
           case b: WdlWfBodyElement if b.getDeclaration != null => Set(b.getDeclaration)
           case b: WdlWfBodyElement if b.getScatterBlock != null => b.getScatterBlock.findReferencesInInnerScopes
           case b: WdlWfBodyElement if b.getIfStmt != null => b.getIfStmt.findReferencesInInnerScopes
+          case b: WdlWfBodyElement if b.getInputBlock != null => b.getInputBlock.findReferencesInInnerScopes
           case b: WdlWfBodyElement if b.getCallBlock != null => findAliasOrCallDeclaration(b.getCallBlock)
+
+          case t: WdlTaskSection if t.getInputBlock != null => t.getInputBlock.findReferencesInInnerScopes
+          case t: WdlTaskSection if t.getDeclaration != null => Set(t.getDeclaration)
         }).map(_.toSet[WdlNamedElement])
 
         val scatterDeclaration = Option(parent) collect {
@@ -88,13 +93,21 @@ object WdlImplicits {
       * Recurses until it has reached the PsiFile node and finds all task blocks, then returns the task declaration for
       * each found task block.
       */
-    def findTasksInScope: Set[WdlNamedTaskElement] = psiElement match {
-      case p: PsiFile =>
-        val taskBlocks = p.getChildren.collect {
-          case taskBlock: WdlTaskBlockImpl => taskBlock
-        }
-        taskBlocks.map(_.getTaskDeclaration).toSet
-      case other => other.getParent.findTasksInScope
+    def findTasksInScope: Set[WdlNamedTaskElement] = {
+      val taskContainer = psiElement match {
+        case p: WdlDraft2File => Some(p)
+        case p: WdlDraft3File => Some(p)
+        case _ => None
+      }
+
+      taskContainer match {
+        case Some(p) =>
+          val taskBlocks = p.getChildren.collect {
+            case taskBlock: WdlTaskBlockImpl => taskBlock
+          }
+          taskBlocks.map(_.getTaskDeclaration).toSet
+        case None => psiElement.getParent.findTasksInScope
+      }
     }
   }
 

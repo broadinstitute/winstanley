@@ -9,7 +9,6 @@ import com.intellij.psi.TokenType
 import com.intellij.psi.tree.IElementType
 import winstanley.psi.WdlTypes
 import org.jetbrains.annotations.NotNull
-
 import com.intellij.openapi.editor.colors.TextAttributesKey._
 
 object WdlSyntaxHighlighter {
@@ -76,7 +75,13 @@ object WdlSyntaxHighlighter {
     WdlTypes.RUNTIME -> DefaultLanguageHighlighterColors.KEYWORD,
     WdlTypes.PARAMETER_META -> DefaultLanguageHighlighterColors.KEYWORD,
     WdlTypes.META -> DefaultLanguageHighlighterColors.KEYWORD,
-    WdlTypes.OBJECT -> DefaultLanguageHighlighterColors.KEYWORD
+    WdlTypes.OBJECT -> DefaultLanguageHighlighterColors.KEYWORD,
+
+    WdlTypes.VERSION -> DefaultLanguageHighlighterColors.KEYWORD,
+    WdlTypes.VERSION_IDENTIFIER -> DefaultLanguageHighlighterColors.CONSTANT,
+    WdlTypes.STRUCT -> DefaultLanguageHighlighterColors.KEYWORD,
+    WdlTypes.ALIAS -> DefaultLanguageHighlighterColors.KEYWORD,
+    WdlTypes.STRUCT_IDENTIFIER_DECL -> DefaultLanguageHighlighterColors.METADATA
   )
 
 }

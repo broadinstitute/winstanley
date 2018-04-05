@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>org.broadinstitute.winstanley</id>
   <name>Winstanley WDL</name>
-  <version>0.2.0</version>
+  <version>0.3.0</version>
   <vendor email="workflow-description-language@googlegroups.com">WDL at Broad Institute</vendor>
 
   <description><![CDATA[
@@ -11,6 +11,8 @@
     ]]></description>
 
   <change-notes><![CDATA[
+  0.3:
+    - Initial WDL Draft 3 support
   0.2:
     - Go to declarations added from calls to tasks
     - Go to declarations added from call outputs to calls
