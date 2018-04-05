@@ -16,6 +16,9 @@ import com.intellij.psi.TokenType;
 %type IElementType
 %eof{  return;
 %eof}
+%{
+  private String wdlVersion = "draft-2";
+%}
 
 D_QUOTE_CHAR=\"
 D_QUOTE_STRING_CHAR=[^\"]
@@ -119,6 +122,7 @@ STRUCT="struct"
 <COMMAND2> {TRIPLE_ANGLE_CLOSE}                        { yybegin(YYINITIAL); return WdlTypes.COMMAND_DELIMITER_CLOSE; }
 <COMMAND1> {DEPRECATED_PLACEHOLDER_OPENER}             { yybegin(COMMAND1_VAR); return WdlTypes.COMMAND_VAR_OPENER; }
 <COMMAND1> {NEW_PLACEHOLDER_OPENER}                    { yybegin(COMMAND1_VAR); return WdlTypes.COMMAND_VAR_OPENER; }
+<COMMAND2> {DEPRECATED_PLACEHOLDER_OPENER}             { if (wdlVersion == "draft-2") { yybegin(COMMAND1_VAR); return WdlTypes.COMMAND_VAR_OPENER; } else { return WdlTypes.COMMAND_CHAR; } }
 <COMMAND2> {NEW_PLACEHOLDER_OPENER}                    { yybegin(COMMAND2_VAR); return WdlTypes.COMMAND_VAR_OPENER; }
 <COMMAND1_VAR> {RBRACE}                                { yybegin(COMMAND1); return WdlTypes.RBRACE; }
 <COMMAND2_VAR> {RBRACE}                                { yybegin(COMMAND2); return WdlTypes.RBRACE; }
@@ -180,7 +184,7 @@ STRUCT="struct"
 <YYINITIAL> {IMPORT}                                   { return WdlTypes.IMPORT; }
 <YYINITIAL> {ALIAS}                                    { return WdlTypes.ALIAS; }
 <YYINITIAL> {VERSION}                                  { return WdlTypes.VERSION; }
-<YYINITIAL> {VERSION_IDENTIFIER}                       { return WdlTypes.VERSION_IDENTIFIER; }
+<YYINITIAL> {VERSION_IDENTIFIER}                       { wdlVersion = "draft-3"; return WdlTypes.VERSION_IDENTIFIER; }
 <YYINITIAL> {WORKFLOW}                                 { yybegin(WAITING_WORKFLOW_IDENTIFIER_DECL); return WdlTypes.WORKFLOW; }
 <WAITING_WORKFLOW_IDENTIFIER_DECL> {IDENTIFIER}        { yybegin(YYINITIAL); return WdlTypes.WORKFLOW_IDENTIFIER_DECL; }
 <YYINITIAL> {CALL}                                     { return WdlTypes.CALL; }
