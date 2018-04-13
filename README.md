@@ -38,6 +38,7 @@ To build or test the plugin using IntelliJ:
   * Open the `Run Configurations` window (for me, in the top right of the IntelliJ window) 
   * Add a new one configuration with the `+` icon.
   * Choose the '`Plugin`' type. The defaults should be good.
+    - Note that IntelliJ may hide `Plugin` in the `XX items more (irrelevant)...` section at the end. 
   * When this new `Run Configuration` is run, a new IntelliJ window opens with the plugin preinstalled ready for testing.
   * Additional instructions for setting this up are in the IntelliJ links above.
 

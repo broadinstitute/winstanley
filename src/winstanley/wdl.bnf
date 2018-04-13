@@ -31,8 +31,7 @@ struct_entry ::= type_e IDENTIFIER {mixin="winstanley.psi.impl.WdlNamedElementIm
 workflow_block ::= WORKFLOW WORKFLOW_IDENTIFIER_DECL LBRACE wf_body_element* RBRACE
 wf_body_element ::= call_block | input_block | declaration | while_loop | if_stmt | scatter_block | wf_outputs
 
-input_block ::= INPUT LBRACE input_declaration* RBRACE
-input_declaration ::= type_e IDENTIFIER {mixin="winstanley.psi.impl.WdlNamedElementImpl" implements="winstanley.psi.WdlNamedElement" methods=[getName getNameIdentifier setName]}
+input_block ::= INPUT LBRACE declaration* RBRACE
 
 callable_lookup ::= fully_qualified_name {mixin="winstanley.psi.impl.WdlNamedElementImpl" implements="winstanley.psi.WdlNamedElement" methods=[getName getNameIdentifier setName getReferences]}
 call_block ::= CALL callable_lookup call_alias? (LBRACE call_body RBRACE)?

@@ -46,7 +46,6 @@ object WdlImplicits {
       def expandChild(child: PsiElement): Set[WdlNamedElement] = child match {
         case d: WdlDeclaration => Set(d)
         case b: WdlWfBodyElement if b.getDeclaration != null => Set(b.getDeclaration)
-        case b: WdlInputDeclaration => Set(b)
         case b: WdlWfBodyElement if b.getCallBlock != null => findAliasOrCallDeclaration(b.getCallBlock)
         case other => other.findReferencesInInnerScopes
       }
