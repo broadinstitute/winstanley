@@ -19,6 +19,7 @@ class AnnotationSpec extends LightCodeInsightFixtureTestCase {
     parsingTestWdls foreach { wdl => annotationTest(wdl.getAbsolutePath) }
   }
 
+  def testDeclarationMissingAssignment(): Unit = annotationTest("declaration_missing_assignment.wdl")
   def testOutputMissingDeclaration(): Unit = annotationTest("output_missing_declaration.wdl")
   def testMissingTaskDeclaration(): Unit = annotationTest("missing_task_declaration.wdl")
   def testMissingAliasDeclaration(): Unit = annotationTest("missing_alias_declaration.wdl")
