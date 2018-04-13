@@ -3,7 +3,7 @@ workflow hello_wf {
 }
 
 task hello_task {
-  <weak_warning descr="Non-input declarations will require immediate assignment in a future version of WDL">Int i</weak_warning>
+  Int i
   command {
     echo ${i}
   }

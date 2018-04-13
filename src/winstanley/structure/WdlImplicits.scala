@@ -88,12 +88,12 @@ object WdlImplicits {
 
     def getTaskIdentifierNode: Option[ASTNode] = Option(psiElement.getNode.findChildByType(WdlTypes.TASK_IDENTIFIER_DECL))
 
-    def getRootElement: PsiElement = {
+    def getWdlFileElement: PsiElement = {
       psiElement match {
         case p: WdlDraft2File => p
         case p: WdlDraft3File => p
         case _ =>
-          psiElement.getParent.getRootElement
+          psiElement.getParent.getWdlFileElement
       }
     }
 

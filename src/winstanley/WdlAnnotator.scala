@@ -37,13 +37,9 @@ class WdlAnnotator extends Annotator {
       } else
         ()
     case declaration: WdlDeclaration =>
-      if (declaration.getSetter == null)
-        psiElement.getRootElement match {
-          case _: WdlDraft3File =>
-            annotationHolder.createErrorAnnotation(psiElement, "Immediate assignment required for non-input declaration [draft-3]")
-          case _: WdlDraft2File =>
-            annotationHolder.createWeakWarningAnnotation(psiElement, "Non-input declarations will require immediate assignment in a future version of WDL")
-        }
+      if (psiElement.getWdlFileElement.isInstanceOf[WdlDraft3File])
+        if (!declaration.getParent.isInstanceOf[WdlInputBlock] && declaration.getSetter == null)
+          annotationHolder.createErrorAnnotation(psiElement, "Immediate assignment required for non-input declaration [draft-3]")
     case _ => ()
   }
 }
