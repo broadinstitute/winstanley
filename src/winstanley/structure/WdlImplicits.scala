@@ -89,6 +89,15 @@ object WdlImplicits {
 
     def getTaskIdentifierNode: Option[ASTNode] = Option(psiElement.getNode.findChildByType(WdlTypes.TASK_IDENTIFIER_DECL))
 
+    def getRootElement: PsiElement = {
+      psiElement match {
+        case p: WdlDraft2File => p
+        case p: WdlDraft3File => p
+        case _ =>
+          psiElement.getParent.getRootElement
+      }
+    }
+
     /**
       * Recurses until it has reached the PsiFile node and finds all task blocks, then returns the task declaration for
       * each found task block.
