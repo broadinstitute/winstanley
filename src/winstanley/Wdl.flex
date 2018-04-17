@@ -122,7 +122,7 @@ STRUCT="struct"
 <COMMAND2> {TRIPLE_ANGLE_CLOSE}                        { yybegin(YYINITIAL); return WdlTypes.COMMAND_DELIMITER_CLOSE; }
 <COMMAND1> {DEPRECATED_PLACEHOLDER_OPENER}             { yybegin(COMMAND1_VAR); return WdlTypes.COMMAND_VAR_OPENER; }
 <COMMAND1> {NEW_PLACEHOLDER_OPENER}                    { yybegin(COMMAND1_VAR); return WdlTypes.COMMAND_VAR_OPENER; }
-<COMMAND2> {DEPRECATED_PLACEHOLDER_OPENER}             { if (wdlVersion == "draft-2") { yybegin(COMMAND1_VAR); return WdlTypes.COMMAND_VAR_OPENER; } else { return WdlTypes.COMMAND_CHAR; } }
+<COMMAND2> {DEPRECATED_PLACEHOLDER_OPENER}             { if (wdlVersion == "draft-2") { yybegin(COMMAND2_VAR); return WdlTypes.COMMAND_VAR_OPENER; } else { return WdlTypes.COMMAND_CHAR; } }
 <COMMAND2> {NEW_PLACEHOLDER_OPENER}                    { yybegin(COMMAND2_VAR); return WdlTypes.COMMAND_VAR_OPENER; }
 <COMMAND1_VAR> {RBRACE}                                { yybegin(COMMAND1); return WdlTypes.RBRACE; }
 <COMMAND2_VAR> {RBRACE}                                { yybegin(COMMAND2); return WdlTypes.RBRACE; }
