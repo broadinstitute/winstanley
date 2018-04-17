@@ -2,9 +2,9 @@ package winstanley
 
 import com.intellij.lang.annotation.{AnnotationHolder, Annotator}
 import com.intellij.psi.PsiElement
+import com.intellij.psi.impl.source.tree.LeafPsiElement
 import winstanley.psi._
 import winstanley.structure.WdlImplicits._
-
 
 class WdlAnnotator extends Annotator {
 
@@ -12,8 +12,11 @@ class WdlAnnotator extends Annotator {
     * Makes sure that the passed PSI element is one of the cases, then determines if it's been declared somewhere
     */
   override def annotate(psiElement: PsiElement, annotationHolder: AnnotationHolder): Unit = psiElement match {
-    case value: WdlValueLookup =>
+    case dep: LeafPsiElement if dep.getElementType == WdlTypes.DEPRECATED_COMMAND_VAR_OPENER =>
+      val commandVar = dep.getParent.getParent
+      annotationHolder.createWarningAnnotation(commandVar.getTextRange, "Deprecated placeholder style: Use ~{ ... } from WDL draft 3 onwards to match 'command <<<' section placeholders")
 
+    case value: WdlValueLookup =>
       value.getIdentifierNode foreach { identifier =>
         val identifierText = identifier.getText
         val valueNames = value.findReferencesInScope.flatMap(_.declaredValueName)

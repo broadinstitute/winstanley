@@ -55,7 +55,8 @@ task_block ::= TASK task_declaration LBRACE task_section* RBRACE
 task_section ::= declaration|input_block|command_block|task_outputs|runtime_block|parameter_meta_block|meta_block
 
 command_block ::= COMMAND COMMAND_DELIMITER_OPEN (COMMAND_CHAR|command_var)* COMMAND_DELIMITER_CLOSE
-command_var ::= COMMAND_VAR_OPENER command_var_option* expression RBRACE
+command_var ::= placeholder_opener command_var_option* expression RBRACE
+placeholder_opener ::= COMMAND_VAR_OPENER | DEPRECATED_COMMAND_VAR_OPENER
 primitive_value ::= string_literal | BOOLEAN | float_value | integer_value
 command_var_option_sep ::= COMMAND_ATTR_SEP EQUAL primitive_value
 command_var_option_default ::= COMMAND_ATTR_DEFAULT EQUAL primitive_value

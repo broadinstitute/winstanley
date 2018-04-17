@@ -45,6 +45,7 @@ class WdlBraceMatcher extends PairedBraceMatcher {
     * @return the array of brace pair definitions.
     */
   override def getPairs: Array[BracePair] = Array(
+    new BracePair(WdlTypes.DEPRECATED_COMMAND_VAR_OPENER, WdlTypes.RBRACE, false),
     new BracePair(WdlTypes.COMMAND_VAR_OPENER, WdlTypes.RBRACE, false),
     new BracePair(WdlTypes.LPAREN, WdlTypes.RPAREN, false),
     new BracePair(WdlTypes.LBRACE, WdlTypes.RBRACE, false),
