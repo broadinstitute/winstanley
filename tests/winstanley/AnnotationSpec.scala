@@ -30,6 +30,8 @@ class AnnotationSpec extends LightCodeInsightFixtureTestCase {
   def testNoCommandSection(): Unit = annotationTest("no_command_section.wdl")
   def testNoRuntimeSection(): Unit = annotationTest("no_runtime_section.wdl")
   def testNoDockerAttribute(): Unit = annotationTest("no_docker_attribute.wdl")
+  def testDraft2WildcardOutputs(): Unit = annotationTest("draft_2_wildcards.wdl")
+  def testDraft3WildcardOutputs(): Unit = annotationTest("draft_3_wildcards.wdl")
 
   private def annotationTest(path: String): Unit = {
     myFixture.configureByFile(path)

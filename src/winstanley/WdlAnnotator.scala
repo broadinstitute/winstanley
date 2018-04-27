@@ -61,6 +61,14 @@ class WdlAnnotator extends Annotator {
       if (psiElement.getWdlFileElement.isInstanceOf[WdlDraft3File])
         if (!declaration.getParent.isInstanceOf[WdlInputBlock] && declaration.getSetter == null)
           annotationHolder.createErrorAnnotation(psiElement, "Immediate assignment required for non-input declaration [draft-3]")
+
+    case wildcardOutput: WdlWfOutputWildcardStatement =>
+      if (psiElement.getWdlFileElement.isInstanceOf[WdlDraft2File]) {
+        annotationHolder.createWeakWarningAnnotation(wildcardOutput, "Declaration style outputs will be required in draft-3 and later")
+      } else {
+        annotationHolder.createErrorAnnotation(wildcardOutput, "Declaration style outputs are required in WDL draft 3 and later")
+      }
+
     case _ => ()
   }
 
