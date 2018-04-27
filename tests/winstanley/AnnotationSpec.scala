@@ -27,6 +27,9 @@ class AnnotationSpec extends LightCodeInsightFixtureTestCase {
   def testImportedTaskNotAnnotated(): Unit = annotationTest("import_sub_wf.wdl")
   def testDeprecatedCommandPlaceholder(): Unit = annotationTest("deprecated_command_placeholder.wdl")
   def testNotYetDeprecatedCommandPlaceholder(): Unit = annotationTest("not_yet_deprecated_command_placeholder.wdl")
+  def testNoCommandSection(): Unit = annotationTest("no_command_section.wdl")
+  def testNoRuntimeSection(): Unit = annotationTest("no_runtime_section.wdl")
+  def testNoDockerAttribute(): Unit = annotationTest("no_docker_attribute.wdl")
 
   private def annotationTest(path: String): Unit = {
     myFixture.configureByFile(path)

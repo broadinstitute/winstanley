@@ -4,4 +4,7 @@ task deprecated_command_placeholder {
   command {
     echo ${5}
   }
+  runtime {
+    docker: "ubuntu:latest"
+  }
 }

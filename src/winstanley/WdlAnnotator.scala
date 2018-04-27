@@ -1,5 +1,6 @@
 package winstanley
 
+import com.intellij.lang.ASTNode
 import com.intellij.lang.annotation.{AnnotationHolder, Annotator}
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
@@ -18,10 +19,15 @@ class WdlAnnotator extends Annotator {
       val commandVar = dep.getParent.getParent
       annotationHolder.createWeakWarningAnnotation(commandVar.getTextRange, "Deprecated placeholder style: Use ~{ ... } from WDL draft 3 onwards to match 'command <<<' section placeholders")
 
-    case task: WdlTaskBlock if !task.getTaskSectionList.asScala.exists(section => Option(section.getRuntimeBlock).isDefined) =>
-      annotationHolder.createWeakWarningAnnotation(task.getTextRange, "Non-portable task section: add a runtime section specifying a docker image")
+    case task: WdlTaskBlock =>
+      if (!task.getTaskSectionList.asScala.exists(section => Option(section.getCommandBlock).isDefined)) {
+        annotationHolder.createErrorAnnotation(task.getTaskDeclaration.getNameIdentifier.getTextRange, "No command specified for task")
+      }
+      if (!task.getTaskSectionList.asScala.exists(section => Option(section.getRuntimeBlock).isDefined)) {
+        annotationHolder.createWeakWarningAnnotation(task.getTaskDeclaration.getNameIdentifier.getTextRange, "Non-portable task section: add a runtime section specifying a docker image")
+      }
     case runtime: WdlRuntimeBlock if !runtime.getMap.getKvList.asScala.flatMap(kvName).contains("docker") =>
-      annotationHolder.createWeakWarningAnnotation(runtime.getTextRange, "Non-portable runtime section: specify a docker image")
+      runtimeKeyword(runtime) foreach { r => annotationHolder.createWeakWarningAnnotation(r.getTextRange, "Non-portable runtime section: specify a docker image") }
 
     case value: WdlValueLookup =>
       value.getIdentifierNode foreach { identifier =>
@@ -54,4 +60,5 @@ class WdlAnnotator extends Annotator {
   }
 
   private def kvName(kv: WdlKv): Option[String] = Option(kv.getNode.findChildByType(WdlTypes.IDENTIFIER)).map(_.getText)
+  private def runtimeKeyword(r: WdlRuntimeBlock): Option[ASTNode] = Option(r.getNode.findChildByType(WdlTypes.RUNTIME))
 }

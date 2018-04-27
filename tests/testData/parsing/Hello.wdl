@@ -11,4 +11,7 @@ task hello_task {
   output {
     Int j = read_int(stdout())
   }
+  runtime {
+    docker: "ubuntu:latest"
+  }
 }
