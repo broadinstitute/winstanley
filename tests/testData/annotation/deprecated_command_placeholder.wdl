@@ -8,6 +8,9 @@ task deprecated_command_placeholder {
   runtime {
     docker: "ubuntu:latest"
   }
+  output {
+    String s = read_string(stdout())
+  }
 }
 
 task command_placeholder {
@@ -17,5 +20,8 @@ task command_placeholder {
   >>>
   runtime {
     docker: "ubuntu:latest"
+  }
+  output {
+    String s = read_string(stdout())
   }
 }

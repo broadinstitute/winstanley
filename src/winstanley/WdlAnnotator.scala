@@ -26,8 +26,13 @@ class WdlAnnotator extends Annotator {
       if (!task.getTaskSectionList.asScala.exists(section => Option(section.getRuntimeBlock).isDefined)) {
         annotationHolder.createWeakWarningAnnotation(task.getTaskDeclaration.getNameIdentifier.getTextRange, "Non-portable task section: add a runtime section specifying a docker image")
       }
+      if (!task.getTaskSectionList.asScala.exists(section => Option(section.getTaskOutputs).isDefined)) {
+        annotationHolder.createWeakWarningAnnotation(task.getTaskDeclaration.getNameIdentifier.getTextRange, "Suspicious lack of task outputs (is this task really idempotent and portable?)")
+      }
     case runtime: WdlRuntimeBlock if !runtime.getMap.getKvList.asScala.flatMap(kvName).contains("docker") =>
       runtimeKeyword(runtime) foreach { r => annotationHolder.createWeakWarningAnnotation(r.getTextRange, "Non-portable runtime section: specify a docker image") }
+    case taskOutputSection: WdlTaskOutputs if taskOutputSection.getOutputKvList.asScala.isEmpty =>
+      outputKeyword(taskOutputSection) foreach { r => annotationHolder.createWeakWarningAnnotation(r.getTextRange, "Suspicious lack of task outputs (is this task really idempotent and portable?)") }
 
     case value: WdlValueLookup =>
       value.getIdentifierNode foreach { identifier =>
@@ -61,4 +66,5 @@ class WdlAnnotator extends Annotator {
 
   private def kvName(kv: WdlKv): Option[String] = Option(kv.getNode.findChildByType(WdlTypes.IDENTIFIER)).map(_.getText)
   private def runtimeKeyword(r: WdlRuntimeBlock): Option[ASTNode] = Option(r.getNode.findChildByType(WdlTypes.RUNTIME))
+  private def outputKeyword(r: WdlTaskOutputs): Option[ASTNode] = Option(r.getNode.findChildByType(WdlTypes.OUTPUT))
 }
