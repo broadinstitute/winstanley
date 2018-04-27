@@ -6,6 +6,8 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement
 import winstanley.psi._
 import winstanley.structure.WdlImplicits._
 
+import collection.JavaConverters._
+
 class WdlAnnotator extends Annotator {
 
   /**
@@ -14,7 +16,12 @@ class WdlAnnotator extends Annotator {
   override def annotate(psiElement: PsiElement, annotationHolder: AnnotationHolder): Unit = psiElement match {
     case dep: LeafPsiElement if dep.getElementType == WdlTypes.DEPRECATED_COMMAND_VAR_OPENER =>
       val commandVar = dep.getParent.getParent
-      annotationHolder.createWarningAnnotation(commandVar.getTextRange, "Deprecated placeholder style: Use ~{ ... } from WDL draft 3 onwards to match 'command <<<' section placeholders")
+      annotationHolder.createWeakWarningAnnotation(commandVar.getTextRange, "Deprecated placeholder style: Use ~{ ... } from WDL draft 3 onwards to match 'command <<<' section placeholders")
+
+    case task: WdlTaskBlock if !task.getTaskSectionList.asScala.exists(section => Option(section.getRuntimeBlock).isDefined) =>
+      annotationHolder.createWeakWarningAnnotation(task.getTextRange, "Non-portable task section: add a runtime section specifying a docker image")
+    case runtime: WdlRuntimeBlock if !runtime.getMap.getKvList.asScala.flatMap(kvName).contains("docker") =>
+      annotationHolder.createWeakWarningAnnotation(runtime.getTextRange, "Non-portable runtime section: specify a docker image")
 
     case value: WdlValueLookup =>
       value.getIdentifierNode foreach { identifier =>
@@ -45,4 +52,6 @@ class WdlAnnotator extends Annotator {
           annotationHolder.createErrorAnnotation(psiElement, "Immediate assignment required for non-input declaration [draft-3]")
     case _ => ()
   }
+
+  private def kvName(kv: WdlKv): Option[String] = Option(kv.getNode.findChildByType(WdlTypes.IDENTIFIER)).map(_.getText)
 }
