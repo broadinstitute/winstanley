@@ -29,14 +29,13 @@ struct_block ::= STRUCT STRUCT_IDENTIFIER_DECL LBRACE struct_entry* RBRACE
 struct_entry ::= type_e IDENTIFIER {mixin="winstanley.psi.impl.WdlNamedElementImpl" implements="winstanley.psi.WdlNamedElement" methods=[getName getNameIdentifier setName]}
 
 workflow_block ::= WORKFLOW WORKFLOW_IDENTIFIER_DECL LBRACE wf_body_element* RBRACE
-wf_body_element ::= call_block | input_block | declaration | while_loop | if_stmt | scatter_block | wf_outputs
+wf_body_element ::= call_block | input_block | declaration | while_loop | if_stmt | scatter_block | wf_outputs | parameter_meta_block | meta_block
 
 input_block ::= INPUT LBRACE declaration* RBRACE
 
 callable_lookup ::= fully_qualified_name {mixin="winstanley.psi.impl.WdlNamedElementImpl" implements="winstanley.psi.WdlNamedElement" methods=[getName getNameIdentifier setName getReferences]}
-call_block ::= CALL callable_lookup call_alias? (LBRACE call_body RBRACE)?
-call_body ::= declaration* call_input*
-call_input ::= INPUT COLON (mapping (COMMA mapping)*)?
+call_block ::= CALL callable_lookup call_alias? (LBRACE call_input RBRACE)?
+call_input ::= (INPUT COLON (mapping COMMA)* mapping?)?
 mapping ::= IDENTIFIER EQUAL expression
 call_alias ::= AS IDENTIFIER {mixin="winstanley.psi.impl.WdlNamedElementImpl" implements="winstanley.psi.WdlNamedElement" methods=[getName getNameIdentifier setName]}
 wf_outputs ::= OUTPUT LBRACE wf_output* RBRACE
@@ -67,8 +66,13 @@ command_var_option ::= command_var_option_sep|command_var_option_default|command
 task_outputs ::= OUTPUT LBRACE output_kv* RBRACE
 output_kv ::= type_e IDENTIFIER EQUAL expression {mixin="winstanley.psi.impl.WdlNamedElementImpl" implements="winstanley.psi.WdlNamedElement" methods=[getName getNameIdentifier setName]}
 runtime_block ::= RUNTIME map
-parameter_meta_block ::= PARAMETER_META map
-meta_block ::= META map
+
+parameter_meta_block ::= PARAMETER_META LBRACE meta_kv* RBRACE
+meta_block ::= META LBRACE meta_kv* RBRACE
+meta_value ::= string_literal | integer_value | float_value | BOOLEAN | NULL | meta_object | meta_array
+meta_kv ::= IDENTIFIER COLON meta_value
+meta_object ::= LBRACE (meta_kv (COMMA meta_kv)*)? RBRACE
+meta_array ::= LSQUARE (meta_value (COMMA meta_value)*)? RSQUARE
 
 declaration ::= type_e IDENTIFIER setter? {mixin="winstanley.psi.impl.WdlNamedElementImpl" implements="winstanley.psi.WdlNamedElement" methods=[getName getNameIdentifier setName]}
 setter ::= EQUAL expression

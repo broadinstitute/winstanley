@@ -94,6 +94,7 @@ ATTR_FALSE="false="|"false ="
 VERSION="version"
 VERSION_IDENTIFIER="draft-3"|"1.0"
 STRUCT="struct"
+NULL="null"
 
 %state WAITING_WORKFLOW_VERSION
 %state WAITING_WORKFLOW_IDENTIFIER_DECL
@@ -198,6 +199,7 @@ STRUCT="struct"
 <YYINITIAL> {IN}                                       { return WdlTypes.IN; }
 <YYINITIAL> {TASK}                                     { yybegin(WAITING_TASK_IDENTIFIER_DECL); return WdlTypes.TASK; }
 <YYINITIAL> {STRUCT}                                   { yybegin(WAITING_STRUCT_DECL); return WdlTypes.STRUCT; }
+<YYINITIAL> {NULL}                                     { return WdlTypes.NULL; }
 <WAITING_STRUCT_DECL> {IDENTIFIER}                     { yybegin(YYINITIAL); return WdlTypes.STRUCT_IDENTIFIER_DECL; }
 <WAITING_TASK_IDENTIFIER_DECL> {IDENTIFIER}            { yybegin(YYINITIAL); return WdlTypes.TASK_IDENTIFIER_DECL; }
 <YYINITIAL> {RUNTIME}                                  { return WdlTypes.RUNTIME; }
