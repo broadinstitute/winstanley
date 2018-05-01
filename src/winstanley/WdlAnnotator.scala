@@ -37,7 +37,7 @@ class WdlAnnotator extends Annotator {
     case value: WdlValueLookup =>
       value.getIdentifierNode foreach { identifier =>
         val identifierText = identifier.getText
-        val valueNames = value.findReferencesInScope.flatMap(_.declaredValueName)
+        val valueNames = value.findReferencesInScope.map(_.getNameIdentifier.getText)
 
         if (!valueNames.contains(identifierText)) {
           annotationHolder.createErrorAnnotation(identifier.getTextRange, s"No declaration found for '${identifier.getText}'")
