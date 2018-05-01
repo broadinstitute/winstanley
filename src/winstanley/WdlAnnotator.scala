@@ -64,7 +64,7 @@ class WdlAnnotator extends Annotator {
 
     case wildcardOutput: WdlWfOutputWildcardStatement =>
       if (psiElement.getWdlFileElement.isInstanceOf[WdlDraft2File]) {
-        annotationHolder.createWeakWarningAnnotation(wildcardOutput, "Declaration style outputs will be required in draft-3 and later")
+        annotationHolder.createWeakWarningAnnotation(wildcardOutput, "Declaration style outputs will be required in a later version of WDL")
       } else {
         annotationHolder.createErrorAnnotation(wildcardOutput, "Declaration style outputs are required in WDL draft 3 and later")
       }
