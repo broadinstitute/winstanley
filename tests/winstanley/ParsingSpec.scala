@@ -16,6 +16,9 @@ class ParsingSpec extends ParsingTestCase("", "wdl", new WdlParserDefinition()) 
 
   def testHello_Alias(): Unit = doTest(true)
 
+  def testHello_version_1_0(): Unit = doTest(true)
+  def testHello_draft_3(): Unit = doTest(true)
+
   def testInput_expr_present(): Unit = doTest(true)
 
   def testInput_expr_absent(): Unit = doTest(true)

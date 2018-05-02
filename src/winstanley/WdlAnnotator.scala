@@ -17,7 +17,7 @@ class WdlAnnotator extends Annotator {
   override def annotate(psiElement: PsiElement, annotationHolder: AnnotationHolder): Unit = psiElement match {
     case dep: LeafPsiElement if dep.getElementType == WdlTypes.DEPRECATED_COMMAND_VAR_OPENER =>
       val commandVar = dep.getParent.getParent
-      annotationHolder.createWeakWarningAnnotation(commandVar.getTextRange, "Deprecated placeholder style: Use ~{ ... } from WDL draft 3 onwards to match 'command <<<' section placeholders")
+      annotationHolder.createWeakWarningAnnotation(commandVar.getTextRange, "Deprecated placeholder style: Use ~{ ... } for WDL 1.0 (draft-3) onwards to match 'command <<<' section placeholders")
 
     case task: WdlTaskBlock =>
       if (!task.getTaskSectionList.asScala.exists(section => Option(section.getCommandBlock).isDefined)) {
@@ -58,15 +58,15 @@ class WdlAnnotator extends Annotator {
       } else
         ()
     case declaration: WdlDeclaration =>
-      if (psiElement.getWdlFileElement.isInstanceOf[WdlDraft3File])
+      if (psiElement.getWdlFileElement.isInstanceOf[WdlVersion10File])
         if (!declaration.getParent.isInstanceOf[WdlInputBlock] && declaration.getSetter == null)
-          annotationHolder.createErrorAnnotation(psiElement, "Immediate assignment required for non-input declaration [draft-3]")
+          annotationHolder.createErrorAnnotation(psiElement, "Immediate assignment required for non-input declaration: do you need to add an 'input { }' section? [WDL 1.0]")
 
     case wildcardOutput: WdlWfOutputWildcardStatement =>
       if (psiElement.getWdlFileElement.isInstanceOf[WdlDraft2File]) {
         annotationHolder.createWeakWarningAnnotation(wildcardOutput, "Declaration style outputs will be required in a later version of WDL")
       } else {
-        annotationHolder.createErrorAnnotation(wildcardOutput, "Declaration style outputs are required in WDL draft 3 and later")
+        annotationHolder.createErrorAnnotation(wildcardOutput, "Declaration style outputs are required in WDL 1.0 (draft 3) and later")
       }
 
     case _ => ()

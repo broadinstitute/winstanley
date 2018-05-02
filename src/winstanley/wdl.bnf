@@ -17,9 +17,9 @@
 
 // Regenerate from IntelliJ using Grammar-Kit plugin and COMMAND-SHIFT-G
 
-wdlFile ::= draft3File | draft2File
+wdlFile ::= version1_0File | draft2File
 draft2File ::= import_stmt* (task_block|workflow_block|COMMENT)*
-draft3File ::= VERSION VERSION_IDENTIFIER import_stmt* (task_block|workflow_block|struct_block|COMMENT)*
+version1_0File ::= VERSION VERSION_IDENTIFIER import_stmt* (task_block|workflow_block|struct_block|COMMENT)*
 
 import_stmt ::= IMPORT string_literal import_namespace? import_alias*
 import_namespace ::= AS IDENTIFIER

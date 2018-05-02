@@ -92,9 +92,10 @@ ATTR_DEFAULT="default"
 ATTR_TRUE="true="|"true ="
 ATTR_FALSE="false="|"false ="
 VERSION="version"
-VERSION_IDENTIFIER="draft-3"
+VERSION_IDENTIFIER="draft-3"|"1.0"
 STRUCT="struct"
 
+%state WAITING_WORKFLOW_VERSION
 %state WAITING_WORKFLOW_IDENTIFIER_DECL
 %state WAITING_TASK_IDENTIFIER_DECL
 %state WAITING_STRUCT_DECL
@@ -183,8 +184,9 @@ STRUCT="struct"
 <YYINITIAL> {COMMENT}                                  { return WdlTypes.COMMENT; }
 <YYINITIAL> {IMPORT}                                   { return WdlTypes.IMPORT; }
 <YYINITIAL> {ALIAS}                                    { return WdlTypes.ALIAS; }
-<YYINITIAL> {VERSION}                                  { return WdlTypes.VERSION; }
-<YYINITIAL> {VERSION_IDENTIFIER}                       { wdlVersion = "draft-3"; return WdlTypes.VERSION_IDENTIFIER; }
+<YYINITIAL> {VERSION}                                  { yybegin(WAITING_WORKFLOW_VERSION); return WdlTypes.VERSION; }
+// For now, any file that is versioned is treated like a 1.0 file. That will have to probably change in the future:
+<WAITING_WORKFLOW_VERSION> {VERSION_IDENTIFIER}        { wdlVersion = "1.0"; yybegin(YYINITIAL); return WdlTypes.VERSION_IDENTIFIER; }
 <YYINITIAL> {WORKFLOW}                                 { yybegin(WAITING_WORKFLOW_IDENTIFIER_DECL); return WdlTypes.WORKFLOW; }
 <WAITING_WORKFLOW_IDENTIFIER_DECL> {IDENTIFIER}        { yybegin(YYINITIAL); return WdlTypes.WORKFLOW_IDENTIFIER_DECL; }
 <YYINITIAL> {CALL}                                     { return WdlTypes.CALL; }

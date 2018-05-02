@@ -91,7 +91,7 @@ object WdlImplicits {
     def getWdlFileElement: PsiElement = {
       psiElement match {
         case p: WdlDraft2File => p
-        case p: WdlDraft3File => p
+        case p: WdlVersion10File => p
         case _ =>
           psiElement.getParent.getWdlFileElement
       }
@@ -104,7 +104,7 @@ object WdlImplicits {
     def findTasksInScope: Set[WdlNamedTaskElement] = {
       val taskContainer = psiElement match {
         case p: WdlDraft2File => Some(p)
-        case p: WdlDraft3File => Some(p)
+        case p: WdlVersion10File => Some(p)
         case _ => None
       }
 

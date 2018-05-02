@@ -1,4 +1,4 @@
-version draft-3
+version 1.0
 
 task <weak_warning descr="Non-portable task section: add a runtime section specifying a docker image">no_runtime_section</weak_warning> {
   command { }
