@@ -19,6 +19,8 @@ class AnnotationSpec extends LightCodeInsightFixtureTestCase {
     parsingTestWdls foreach { wdl => annotationTest(wdl.getAbsolutePath) }
   }
 
+  def testChainFail(): Unit = annotationTest("chain_fail.wdl")
+  def testChainFailV1(): Unit = annotationTest("chain_fail_v1.wdl")
   def testDeclarationMissingAssignment(): Unit = annotationTest("declaration_missing_assignment.wdl")
   def testOutputMissingDeclaration(): Unit = annotationTest("output_missing_declaration.wdl")
   def testMissingTaskDeclaration(): Unit = annotationTest("missing_task_declaration.wdl")
