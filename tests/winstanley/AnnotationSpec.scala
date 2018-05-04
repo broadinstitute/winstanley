@@ -24,7 +24,7 @@ class AnnotationSpec extends LightCodeInsightFixtureTestCase {
   def testDeclarationMissingAssignment(): Unit = annotationTest("declaration_missing_assignment.wdl")
   def testDeprecatedCommandPlaceholder(): Unit = annotationTest("deprecated_command_placeholder.wdl")
   def testDraft2WildcardOutputs(): Unit = annotationTest("draft_2_wildcards.wdl")
-  def testDraft3WildcardOutputs(): Unit = annotationTest("draft_3_wildcards.wdl")
+  def testVersion10WildcardOutputs(): Unit = annotationTest("version_1_0_wildcards.wdl")
   def testImportedTaskNotAnnotated(): Unit = annotationTest("import_sub_wf.wdl")
   def testMissingAliasDeclaration(): Unit = annotationTest("missing_alias_declaration.wdl")
   def testMissingTaskDeclaration(): Unit = annotationTest("missing_task_declaration.wdl")
@@ -35,7 +35,6 @@ class AnnotationSpec extends LightCodeInsightFixtureTestCase {
   def testNotYetDeprecatedCommandPlaceholder(): Unit = annotationTest("not_yet_deprecated_command_placeholder.wdl")
   def testOutputMissingDeclaration(): Unit = annotationTest("output_missing_declaration.wdl")
   def testLookupNotPointingToAliasDeclaration(): Unit = annotationTest("value_lookup_not_pointing_to_alias_declaration.wdl")
-  def testVersion10WildcardOutputs(): Unit = annotationTest("version_1_0_wildcards.wdl")
 
   private def annotationTest(path: String): Unit = {
     myFixture.configureByFile(path)
