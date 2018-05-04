@@ -1,5 +1,6 @@
-# test that in 1.0, declarations without assignments are still allowed in the input block
 version 1.0
+# test that in 1.0, declarations without assignments are allowed in the input block
+# (and that '1.0' is not a reserved sequence globally)
 
 workflow hello_wf {
   input {

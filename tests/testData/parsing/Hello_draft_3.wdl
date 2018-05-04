@@ -1,5 +1,5 @@
-# test that in 1.0, declarations without assignments are still allowed in the input block
 version draft-3
+# test that in draft-3, declarations without assignments are allowed in the input block
 
 workflow hello_wf {
   input {
