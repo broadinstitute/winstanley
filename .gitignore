@@ -1,4 +1,10 @@
-.idea
+# Exclude the project folder, except for a few pieces that are not machine-specific and aid in getting set up
+# Loosely based on https://intellij-support.jetbrains.com/hc/en-us/articles/206544839-How-to-manage-projects-under-Version-Control-Systems
+.idea/*
+!.idea/runConfigurations
+!.idea/libraries
+!.idea/modules.xml
+
 gen
 src/winstanley/WdlLexer.java
 src/winstanley/WdlLexer.java~
@@ -6,4 +12,5 @@ out
 .DS_Store
 idea-flex.skeleton
 jflex-1.7.0-SNAPSHOT.jar
+jflex-1.7.0.jar
 winstanley.zip
