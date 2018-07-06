@@ -25,7 +25,7 @@ To build or test the plugin using IntelliJ:
 
 1. Get set up with the pre-requisites listed here: http://www.jetbrains.org/intellij/sdk/docs/tutorials/custom_language_support/prerequisites.html
 2. Import this repo into IntelliJ as an existing project ("Import Project" on the initial screen).
-    * Accept all of the defaults on the import wizard
+    * Accept all of the defaults in the import wizard
     * When prompted to overwrite or reuse the module definition file `winstanley.iml`, you must select "Reuse"
 3. Make sure the repo is using the IntelliJ plugin Java SDK
     * Project Structure -> Project -> Project SDK
