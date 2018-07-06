@@ -48,6 +48,7 @@ To build or test the plugin using IntelliJ:
     * Additional instructions for setting this up are in the IntelliJ links above.
     * If you see  the message "No plugin module specified for configuration", locate the dropdown "Use classpath of module" and select "winstanley"
       - If there are no entries in the dropdown, this may be because in Project Structure, the `winstanley` module is of type Java (folder with blue square) instead of IntelliJ Platform Plugin (power plug). You can correct this by removing the Java module and replacing it with a new IPP module.
+    * If you kill the new IntelliJ window with the "stop" button, you will see the first launch screen every time; quit the application instead.
 
 ## Errata
 
