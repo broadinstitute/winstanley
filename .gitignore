@@ -1,5 +1,4 @@
 .idea/*
-!.idea/runConfigurations
 gen
 src/winstanley/WdlLexer.java
 src/winstanley/WdlLexer.java~
