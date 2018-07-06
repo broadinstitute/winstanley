@@ -1,4 +1,4 @@
-.idea/*
+.idea
 gen
 src/winstanley/WdlLexer.java
 src/winstanley/WdlLexer.java~
