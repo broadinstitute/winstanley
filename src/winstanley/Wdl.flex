@@ -185,7 +185,7 @@ NULL="null"
 <YYINITIAL> {COMMENT}                                  { return WdlTypes.COMMENT; }
 <YYINITIAL> {IMPORT}                                   { return WdlTypes.IMPORT; }
 <YYINITIAL> {ALIAS}                                    { return WdlTypes.ALIAS; }
-<YYINITIAL> {VERSION}                                  { yybegin(WAITING_WORKFLOW_VERSION); return WdlTypes.VERSION; }
+<YYINITIAL> ^{VERSION}                                  { yybegin(WAITING_WORKFLOW_VERSION); return WdlTypes.VERSION; }
 // For now, any file that is versioned is treated like a 1.0 file. That will have to probably change in the future:
 <WAITING_WORKFLOW_VERSION> {VERSION_IDENTIFIER}        { wdlVersion = "1.0"; yybegin(YYINITIAL); return WdlTypes.VERSION_IDENTIFIER; }
 <YYINITIAL> {WORKFLOW}                                 { yybegin(WAITING_WORKFLOW_IDENTIFIER_DECL); return WdlTypes.WORKFLOW; }
