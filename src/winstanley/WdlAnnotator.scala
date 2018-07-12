@@ -73,6 +73,8 @@ class WdlAnnotator extends Annotator {
     case callBlock: WdlCallBlock =>
       val actualInputs: List[WdlMapping] = callBlock.getCallInput.getMappingList.asScala.toList
       println("Actual inputs at call site: " + actualInputs.map(_.getNode.getText).mkString(", "))
+      println(callBlock.getNode.getText)
+      println(callBlock.getWdlFileElement.getChildren.filter(_.isInstanceOf[WdlTaskBlock]).map(_.getNode.getText).mkString(", "))
     case _ => ()
   }
 
