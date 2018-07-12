@@ -4,6 +4,7 @@ import com.intellij.lang.ASTNode
 import com.intellij.lang.annotation.{AnnotationHolder, Annotator}
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
+import com.intellij.psi.tree.TokenSet
 import winstanley.psi._
 import winstanley.structure.WdlImplicits._
 
@@ -46,7 +47,7 @@ class WdlAnnotator extends Annotator {
     case value: WdlCallableLookup =>
       // TODO (Issue 63): Work out a better way to verify that imports exist and (if local?) that an appropriate task/workflow inside them exist.
       // For now to avoid error highlights, I'll just suppress errors for things that look like FQNs
-      if (value.getFullyQualifiedName.getNode.getChildren(null).length == 1) {
+      if (value.getFullyQualifiedName.getNode.getChildren(TokenSet.ANY).length == 1) {
         value.getFullyQualifiedName.getIdentifierNode foreach { identifier =>
           val identifierText = identifier.getText
           val taskNames = value.findTasksInScope.flatMap(_.declaredValueName)
@@ -69,6 +70,9 @@ class WdlAnnotator extends Annotator {
         annotationHolder.createErrorAnnotation(wildcardOutput, "Declaration style outputs are required in WDL 1.0 (draft 3) and later")
       }
 
+    case callBlock: WdlCallBlock =>
+      val actualInputs: List[WdlMapping] = callBlock.getCallInput.getMappingList.asScala.toList
+      println("Actual inputs at call site: " + actualInputs.map(_.getNode.getText).mkString(", "))
     case _ => ()
   }
 
