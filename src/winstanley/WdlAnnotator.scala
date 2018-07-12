@@ -6,6 +6,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.tree.TokenSet
 import winstanley.psi._
+import winstanley.psi.impl.WdlTaskBlockImpl
 import winstanley.structure.WdlImplicits._
 
 import collection.JavaConverters._
@@ -50,7 +51,7 @@ class WdlAnnotator extends Annotator {
       if (value.getFullyQualifiedName.getNode.getChildren(TokenSet.ANY).length == 1) {
         value.getFullyQualifiedName.getIdentifierNode foreach { identifier =>
           val identifierText = identifier.getText
-          val taskNames = value.findTasksInScope.flatMap(_.declaredValueName)
+          val taskNames = value.findTaskDeclarationsInScope.flatMap(_.declaredValueName)
 
           if (!taskNames.contains(identifierText)) {
             annotationHolder.createErrorAnnotation(identifier.getTextRange, s"No task declaration found for '${identifier.getText}'")
@@ -73,8 +74,12 @@ class WdlAnnotator extends Annotator {
     case callBlock: WdlCallBlock =>
       val actualInputs: List[WdlMapping] = callBlock.getCallInput.getMappingList.asScala.toList
       println("Actual inputs at call site: " + actualInputs.map(_.getNode.getText).mkString(", "))
-      println(callBlock.getNode.getText)
-      println(callBlock.getWdlFileElement.getChildren.filter(_.isInstanceOf[WdlTaskBlock]).map(_.getNode.getText).mkString(", "))
+      val taskName = callBlock.getCallableLookup.getName
+      println(taskName)
+      val tasksInScope: Set[WdlTaskBlockImpl] = callBlock.findTasksInScope
+      val matchingTask: Option[WdlTaskBlockImpl] = tasksInScope.find(_.getTaskDeclaration.getName == taskName)
+//      println(matchingTask.get.getTaskSectionList.asScala.map(_.getInputBlock).mkString(", "))
+      println(matchingTask.get.getTaskSectionList.asScala.head.getInputBlock.getDeclarationList)
     case _ => ()
   }
 

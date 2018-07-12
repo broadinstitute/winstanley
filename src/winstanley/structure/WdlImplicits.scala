@@ -101,7 +101,11 @@ object WdlImplicits {
       * Recurses until it has reached the PsiFile node and finds all task blocks, then returns the task declaration for
       * each found task block.
       */
-    def findTasksInScope: Set[WdlNamedTaskElement] = {
+    def findTaskDeclarationsInScope: Set[WdlNamedTaskElement] = {
+      psiElement.findTasksInScope.map(_.getTaskDeclaration).toSet
+    }
+
+    def findTasksInScope: Set[WdlTaskBlockImpl] = {
       val taskContainer = psiElement match {
         case p: WdlDraft2File => Some(p)
         case p: WdlVersion10File => Some(p)
@@ -113,7 +117,7 @@ object WdlImplicits {
           val taskBlocks = p.getChildren.collect {
             case taskBlock: WdlTaskBlockImpl => taskBlock
           }
-          taskBlocks.map(_.getTaskDeclaration).toSet
+          taskBlocks.toSet
         case None => psiElement.getParent.findTasksInScope
       }
     }
