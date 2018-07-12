@@ -75,11 +75,10 @@ class WdlAnnotator extends Annotator {
       val actualInputs: List[WdlMapping] = callBlock.getCallInput.getMappingList.asScala.toList
       println("Actual inputs at call site: " + actualInputs.map(_.getNode.getText).mkString(", "))
       val taskName = callBlock.getCallableLookup.getName
-      println(taskName)
       val tasksInScope: Set[WdlTaskBlockImpl] = callBlock.findTasksInScope
       val matchingTask: Option[WdlTaskBlockImpl] = tasksInScope.find(_.getTaskDeclaration.getName == taskName)
-//      println(matchingTask.get.getTaskSectionList.asScala.map(_.getInputBlock).mkString(", "))
-      println(matchingTask.get.getTaskSectionList.asScala.head.getInputBlock.getDeclarationList)
+      println(matchingTask.get.getTaskSectionList.asScala.head.getInputBlock.getDeclarationList.asScala.map(_.getName).mkString(", "))
+      println(matchingTask.get.getTaskSectionList.asScala.head.getInputBlock.getDeclarationList.asScala.map(_.getTypeE).mkString(", "))
     case _ => ()
   }
 
