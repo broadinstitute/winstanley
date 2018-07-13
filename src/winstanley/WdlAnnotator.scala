@@ -73,18 +73,38 @@ class WdlAnnotator extends Annotator {
 
     case callBlock: WdlCallBlock =>
       val actualInputs: List[WdlMapping] = callBlock.getCallInput.getMappingList.asScala.toList
-//      println("Actual inputs at call site: " + actualInputs.map(_.getNode.getText).mkString(", "))
-      val taskName = callBlock.getCallableLookup.getName
-      val tasksInScope: Set[WdlTaskBlockImpl] = callBlock.findTasksInScope
-      val matchingTask: Option[WdlTaskBlockImpl] = tasksInScope.find(_.getTaskDeclaration.getName == taskName)
-      val taskInputs = matchingTask.get.getTaskSectionList.asScala.head.getInputBlock.getDeclarationList
+      println("Actual inputs at call site: " + actualInputs.map(_.getNode.getText).mkString(", "))
 
-      // Need to handle optional and/or default inputs (and maybe nonempty arrays?)
-      if (actualInputs.size != taskInputs.size)
-        annotationHolder.createErrorAnnotation(psiElement, s"Task expects ${taskInputs.size} inputs, found ${actualInputs.size}.")
+      def taskForCall(callBlock: WdlCallBlock): Option[WdlTaskBlockImpl] = {
+        val taskName = callBlock.getCallableLookup.getName
+        val tasksInScope: Set[WdlTaskBlockImpl] = callBlock.findTasksInScope
 
-//      println(matchingTask.get.getTaskSectionList.asScala.head.getInputBlock.getDeclarationList.asScala.map(_.getName).mkString(", "))
-//      println(matchingTask.get.getTaskSectionList.asScala.head.getInputBlock.getDeclarationList.asScala.map(_.getTypeE).mkString(", "))
+        tasksInScope.find(_.getTaskDeclaration.getName == taskName)
+      }
+
+      taskForCall(callBlock) match {
+        case Some(task) =>
+          // The "type" of a WdlTaskSection is determined by which one of its getXXX() methods returns not-null. Checkmate, Scala nerds.
+          val inputSection: WdlTaskSection = task.getTaskSectionList.asScala.find(_.getInputBlock != null).get
+          val inputs = inputSection.getInputBlock.getDeclarationList.asScala
+
+          // Don't worry about inputs that have a default, are optional, or both
+          val requiredInputs = inputs.filterNot { input =>
+            input.getTypeE.getText.endsWith("?") || input.getSetter != null
+          }
+
+          if (actualInputs.size != requiredInputs.size)
+            annotationHolder.createErrorAnnotation(
+              psiElement,
+              s"Task ${callBlock.getCallableLookup.getName} requires ${requiredInputs.size}, found ${actualInputs.size}."
+            )
+//          println(inputs.map(_.getName).mkString("[", ", ", "]"))
+//          println(inputs.map(_.getNameIdentifier.getText).mkString("[", ", ", "]"))
+//          println(inputs.map(_.getTypeE.getText).mkString("[", ", ", "]"))
+//          println(inputs.map(_.getSetter).mkString("[", ", ", "]"))
+
+        case None => annotationHolder.createErrorAnnotation(psiElement, "Programmer error (by plugin developer)")
+      }
     case _ => ()
   }
 
