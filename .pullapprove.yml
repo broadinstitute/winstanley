@@ -14,4 +14,4 @@ groups:
     author_approval:
       ignored: true
     teams:
-        - redteam
+        - wb-batch
