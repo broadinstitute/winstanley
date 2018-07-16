@@ -72,8 +72,10 @@ class WdlAnnotator extends Annotator {
       }
 
     case callBlock: WdlCallBlock =>
-      val actualInputs: List[WdlMapping] = callBlock.getCallInput.getMappingList.asScala.toList
-      println("Actual inputs at call site: " + actualInputs.map(_.getNode.getText).mkString(", "))
+      // In the interest of unambiguous naming, this method abuses the formal definitions of parameter (declared on method) and argument (passed to method)
+      val arguments: List[WdlMapping] = callBlock.getCallInput.getMappingList.asScala.toList
+      val argumentNames = arguments.map(_.getNode.getText.split(Array(' ', '=')).head)
+      println("Actual argument at call site: " + argumentNames.mkString(", "))
 
       def taskForCall(callBlock: WdlCallBlock): Option[WdlTaskBlockImpl] = {
         val taskName = callBlock.getCallableLookup.getName
@@ -86,22 +88,43 @@ class WdlAnnotator extends Annotator {
         case Some(task) =>
           // The "type" of a WdlTaskSection is determined by which one of its getXXX() methods returns not-null. Checkmate, Scala nerds.
           val inputSection: WdlTaskSection = task.getTaskSectionList.asScala.find(_.getInputBlock != null).get
-          val inputs = inputSection.getInputBlock.getDeclarationList.asScala
+          val parameters: Seq[WdlDeclaration] = inputSection.getInputBlock.getDeclarationList.asScala
 
-          // Don't worry about inputs that have a default, are optional, or both
-          val requiredInputs = inputs.filterNot { input =>
-            input.getTypeE.getText.endsWith("?") || input.getSetter != null
+          val missingArgs: Seq[String] = parameters flatMap { parameter =>
+            if (parameter.getTypeE.getText.endsWith("?") ||  parameter.getSetter != null) {
+              // Has a default, is optional, or both - check type only
+              None
+            } else {
+              if (!argumentNames.contains(parameter.getName))
+                Some(parameter.getName)
+              else
+                None
+            }
           }
 
-          if (actualInputs.size != requiredInputs.size)
+          val extraArgs: Seq[String] = argumentNames flatMap { argument =>
+            if (!parameters.map(_.getName).contains(argument))
+              Some(argument)
+            else
+              None
+          }
+
+          // Multiple annotations on the same element are supported and work well visually
+          if (missingArgs.nonEmpty)
             annotationHolder.createErrorAnnotation(
               psiElement,
-              s"Task ${callBlock.getCallableLookup.getName} requires ${requiredInputs.size}, found ${actualInputs.size}."
+              "Missing required argument(s): " + missingArgs.mkString(", ")
             )
-//          println(inputs.map(_.getName).mkString("[", ", ", "]"))
-//          println(inputs.map(_.getNameIdentifier.getText).mkString("[", ", ", "]"))
-//          println(inputs.map(_.getTypeE.getText).mkString("[", ", ", "]"))
-//          println(inputs.map(_.getSetter).mkString("[", ", ", "]"))
+
+          if (extraArgs.nonEmpty)
+            annotationHolder.createErrorAnnotation(
+              psiElement,
+              "Found extraneous argument(s): " + extraArgs.mkString(", ")
+            )
+//          println(requiredInputs.map(_.getName).mkString("[", ", ", "]"))
+//          println(requiredInputs.map(_.getNameIdentifier.getText).mkString("[", ", ", "]"))
+//          println(requiredInputs.map(_.getTypeE.getText).mkString("[", ", ", "]"))
+//          println(requiredInputs.map(_.getSetter).mkString("[", ", ", "]"))
 
         case None => annotationHolder.createErrorAnnotation(psiElement, "Programmer error (by plugin developer)")
       }
