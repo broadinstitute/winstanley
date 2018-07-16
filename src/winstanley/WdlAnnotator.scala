@@ -72,10 +72,7 @@ class WdlAnnotator extends Annotator {
       }
 
     case callBlock: WdlCallBlock =>
-      // In the interest of unambiguous naming, this method abuses the formal definitions of parameter (declared on method) and argument (passed to method)
-      val arguments: List[WdlMapping] = callBlock.getCallInput.getMappingList.asScala.toList
-      val argumentNames = arguments.map(_.getNode.getText.split(Array(' ', '=')).head)
-      println("Actual argument at call site: " + argumentNames.mkString(", "))
+      // In the interest of unambiguous naming, this method (ab)uses the formal definitions of parameter (declared on method) and argument (passed to method)
 
       def taskForCall(callBlock: WdlCallBlock): Option[WdlTaskBlockImpl] = {
         val taskName = callBlock.getCallableLookup.getName
@@ -90,9 +87,11 @@ class WdlAnnotator extends Annotator {
           val inputSection: WdlTaskSection = task.getTaskSectionList.asScala.find(_.getInputBlock != null).get
           val parameters: Seq[WdlDeclaration] = inputSection.getInputBlock.getDeclarationList.asScala
 
+          val arguments: List[WdlMapping] = callBlock.getCallInput.getMappingList.asScala.toList
+          val argumentNames = arguments.map(_.getNode.getText.split(Array(' ', '=')).head)
+
           val missingArgs: Seq[String] = parameters flatMap { parameter =>
             if (parameter.getTypeE.getText.endsWith("?") ||  parameter.getSetter != null) {
-              // Has a default, is optional, or both - check type only
               None
             } else {
               if (!argumentNames.contains(parameter.getName))
@@ -113,20 +112,16 @@ class WdlAnnotator extends Annotator {
           if (missingArgs.nonEmpty)
             annotationHolder.createErrorAnnotation(
               psiElement,
-              "Missing required argument(s): " + missingArgs.mkString(", ")
+              "Missing required argument(s) for task: " + missingArgs.mkString(", ")
             )
 
           if (extraArgs.nonEmpty)
             annotationHolder.createErrorAnnotation(
               psiElement,
-              "Found extraneous argument(s): " + extraArgs.mkString(", ")
+              "Unexpected argument(s) for task: " + extraArgs.mkString(", ")
             )
-//          println(requiredInputs.map(_.getName).mkString("[", ", ", "]"))
-//          println(requiredInputs.map(_.getNameIdentifier.getText).mkString("[", ", ", "]"))
-//          println(requiredInputs.map(_.getTypeE.getText).mkString("[", ", ", "]"))
-//          println(requiredInputs.map(_.getSetter).mkString("[", ", ", "]"))
 
-        case None => annotationHolder.createErrorAnnotation(psiElement, "Programmer error (by plugin developer)")
+        case None => ()
       }
     case _ => ()
   }
