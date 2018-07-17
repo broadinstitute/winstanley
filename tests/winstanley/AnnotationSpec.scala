@@ -35,6 +35,7 @@ class AnnotationSpec extends LightCodeInsightFixtureTestCase {
   def testNotYetDeprecatedCommandPlaceholder(): Unit = annotationTest("not_yet_deprecated_command_placeholder.wdl")
   def testOutputMissingDeclaration(): Unit = annotationTest("output_missing_declaration.wdl")
   def testLookupNotPointingToAliasDeclaration(): Unit = annotationTest("value_lookup_not_pointing_to_alias_declaration.wdl")
+  def testCallInputChecking(): Unit = annotationTest("call_input_checking.wdl")
 
   private def annotationTest(path: String): Unit = {
     myFixture.configureByFile(path)

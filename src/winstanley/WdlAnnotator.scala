@@ -106,6 +106,13 @@ class WdlAnnotator extends Annotator {
                 }
               }
 
+              // Multiple annotations on the same element are supported and work well visually
+              if (missingArgs.nonEmpty)
+                annotationHolder.createErrorAnnotation(
+                  psiElement,
+                  "Missing required inputs(s) for task: " + missingArgs.mkString(", ")
+                )
+
               val extraArgs: Seq[String] = argumentNames flatMap { argument =>
                 if (!parameters.map(_.getName).contains(argument))
                   Some(argument)
@@ -113,17 +120,10 @@ class WdlAnnotator extends Annotator {
                   None
               }
 
-              // Multiple annotations on the same element are supported and work well visually
-              if (missingArgs.nonEmpty)
-                annotationHolder.createErrorAnnotation(
-                  psiElement,
-                  "Missing required argument(s) for task: " + missingArgs.mkString(", ")
-                )
-
               if (extraArgs.nonEmpty)
                 annotationHolder.createErrorAnnotation(
                   psiElement,
-                  "Unexpected argument(s) for task: " + extraArgs.mkString(", ")
+                  "Unexpected inputs(s) for task: " + extraArgs.mkString(", ")
                 )
             case (Some(_), None) =>
               annotationHolder.createErrorAnnotation(psiElement, "Task does not take inputs.")
