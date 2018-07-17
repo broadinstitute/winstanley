@@ -90,41 +90,7 @@ class WdlAnnotator extends Annotator {
 
           (maybeCallInput, maybeTaskInputSection) match {
             case (Some(callInput), Some(taskInputSection)) =>
-              val arguments: List[WdlMapping] = callInput.getMappingList.asScala.toList
-              val argumentNames = arguments.map(_.getNode.getText.split(Array(' ', '=')).head)
-
-              val parameters: Seq[WdlDeclaration] = taskInputSection.getInputBlock.getDeclarationList.asScala
-
-              val missingArgs: Seq[String] = parameters flatMap { parameter =>
-                if (parameter.getTypeE.getText.endsWith("?") || parameter.getSetter != null) {
-                  None
-                } else {
-                  if (!argumentNames.contains(parameter.getName))
-                    Some(parameter.getName)
-                  else
-                    None
-                }
-              }
-
-              // Multiple annotations on the same element are supported and work well visually
-              if (missingArgs.nonEmpty)
-                annotationHolder.createErrorAnnotation(
-                  psiElement,
-                  "Missing required inputs(s) for task: " + missingArgs.mkString(", ")
-                )
-
-              val extraArgs: Seq[String] = argumentNames flatMap { argument =>
-                if (!parameters.map(_.getName).contains(argument))
-                  Some(argument)
-                else
-                  None
-              }
-
-              if (extraArgs.nonEmpty)
-                annotationHolder.createErrorAnnotation(
-                  psiElement,
-                  "Unexpected inputs(s) for task: " + extraArgs.mkString(", ")
-                )
+              compareInputListsForCall(psiElement, annotationHolder, callInput, taskInputSection)
             case (Some(_), None) =>
               annotationHolder.createErrorAnnotation(psiElement, "Task does not take inputs.")
             case (None, Some(_)) =>
@@ -142,4 +108,43 @@ class WdlAnnotator extends Annotator {
   private def kvName(kv: WdlKv): Option[String] = Option(kv.getNode.findChildByType(WdlTypes.IDENTIFIER)).map(_.getText)
   private def runtimeKeyword(r: WdlRuntimeBlock): Option[ASTNode] = Option(r.getNode.findChildByType(WdlTypes.RUNTIME))
   private def outputKeyword(r: WdlTaskOutputs): Option[ASTNode] = Option(r.getNode.findChildByType(WdlTypes.OUTPUT))
+
+  private def compareInputListsForCall(psiElement: PsiElement, annotationHolder: AnnotationHolder, callInput: WdlCallInput, taskInputSection: WdlTaskSection) = {
+    val arguments: List[WdlMapping] = callInput.getMappingList.asScala.toList
+    val argumentNames = arguments.map(_.getNode.getText.split(Array(' ', '=')).head)
+
+    val parameters: Seq[WdlDeclaration] = taskInputSection.getInputBlock.getDeclarationList.asScala
+
+    val missingArgs: Seq[String] = parameters flatMap { parameter =>
+      if (parameter.getTypeE.getText.endsWith("?") || parameter.getSetter != null) {
+        None
+      } else {
+        if (!argumentNames.contains(parameter.getName))
+          Some(parameter.getName)
+        else
+          None
+      }
+    }
+
+    // Multiple annotations on the same element are supported and work well visually
+    if (missingArgs.nonEmpty)
+      annotationHolder.createErrorAnnotation(
+        psiElement,
+        "Missing required inputs(s) for task: " + missingArgs.mkString(", ")
+      )
+
+    val extraArgs: Seq[String] = argumentNames flatMap { argument =>
+      if (!parameters.map(_.getName).contains(argument))
+        Some(argument)
+      else
+        None
+    }
+
+    if (extraArgs.nonEmpty)
+      annotationHolder.createErrorAnnotation(
+        psiElement,
+        "Unexpected inputs(s) for task: " + extraArgs.mkString(", ")
+      )
+  }
+
 }
