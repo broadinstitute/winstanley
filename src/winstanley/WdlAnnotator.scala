@@ -72,8 +72,6 @@ class WdlAnnotator extends Annotator {
       }
 
     case callBlock: WdlCallBlock =>
-      // In the interest of unambiguous naming, this method (ab)uses the formal definitions of parameter (declared on method) and argument (passed to method)
-
       def taskForCall(callBlock: WdlCallBlock): Option[WdlTaskBlockImpl] = {
         val taskName = callBlock.getCallableLookup.getName
         val tasksInScope: Set[WdlTaskBlockImpl] = callBlock.findTasksInScope
@@ -110,6 +108,7 @@ class WdlAnnotator extends Annotator {
   private def outputKeyword(r: WdlTaskOutputs): Option[ASTNode] = Option(r.getNode.findChildByType(WdlTypes.OUTPUT))
 
   private def compareInputListsForCall(psiElement: PsiElement, annotationHolder: AnnotationHolder, callInput: WdlCallInput, taskInputSection: WdlTaskSection) = {
+    // In the interest of unambiguous naming, this method (ab)uses the formal definitions of parameter (declared on method) and argument (passed to method)
     val arguments: List[WdlMapping] = callInput.getMappingList.asScala.toList
     val argumentNames = arguments.map(_.getNode.getText.split(Array(' ', '=')).head)
 
