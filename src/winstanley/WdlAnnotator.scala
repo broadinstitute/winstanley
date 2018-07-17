@@ -84,42 +84,55 @@ class WdlAnnotator extends Annotator {
       taskForCall(callBlock) match {
         case Some(task) =>
           // The "type" of a WdlTaskSection is determined by which one of its getXXX() methods returns not-null. Checkmate, Scala nerds.
-          val inputSection: WdlTaskSection = task.getTaskSectionList.asScala.find(_.getInputBlock != null).get
-          val parameters: Seq[WdlDeclaration] = inputSection.getInputBlock.getDeclarationList.asScala
+          val maybeTaskInputSection: Option[WdlTaskSection] = task.getTaskSectionList.asScala.find(_.getInputBlock != null)
 
-          val arguments: List[WdlMapping] = callBlock.getCallInput.getMappingList.asScala.toList
-          val argumentNames = arguments.map(_.getNode.getText.split(Array(' ', '=')).head)
+          val maybeCallInput: Option[WdlCallInput] = Option(callBlock.getCallInput)
 
-          val missingArgs: Seq[String] = parameters flatMap { parameter =>
-            if (parameter.getTypeE.getText.endsWith("?") ||  parameter.getSetter != null) {
-              None
-            } else {
-              if (!argumentNames.contains(parameter.getName))
-                Some(parameter.getName)
-              else
-                None
-            }
+          (maybeCallInput, maybeTaskInputSection) match {
+            case (Some(callInput), Some(taskInputSection)) =>
+              val arguments: List[WdlMapping] = callInput.getMappingList.asScala.toList
+              val argumentNames = arguments.map(_.getNode.getText.split(Array(' ', '=')).head)
+
+              val parameters: Seq[WdlDeclaration] = taskInputSection.getInputBlock.getDeclarationList.asScala
+
+              val missingArgs: Seq[String] = parameters flatMap { parameter =>
+                if (parameter.getTypeE.getText.endsWith("?") || parameter.getSetter != null) {
+                  None
+                } else {
+                  if (!argumentNames.contains(parameter.getName))
+                    Some(parameter.getName)
+                  else
+                    None
+                }
+              }
+
+              val extraArgs: Seq[String] = argumentNames flatMap { argument =>
+                if (!parameters.map(_.getName).contains(argument))
+                  Some(argument)
+                else
+                  None
+              }
+
+              // Multiple annotations on the same element are supported and work well visually
+              if (missingArgs.nonEmpty)
+                annotationHolder.createErrorAnnotation(
+                  psiElement,
+                  "Missing required argument(s) for task: " + missingArgs.mkString(", ")
+                )
+
+              if (extraArgs.nonEmpty)
+                annotationHolder.createErrorAnnotation(
+                  psiElement,
+                  "Unexpected argument(s) for task: " + extraArgs.mkString(", ")
+                )
+            case (Some(_), None) =>
+              annotationHolder.createErrorAnnotation(psiElement, "Task does not take inputs.")
+            case (None, Some(_)) =>
+              // TODO: we could show the whole input list as missing, but a much nicer way would be to
+              // provide a "fix me" suggestion that autofills the entire input block
+              annotationHolder.createErrorAnnotation(psiElement, "Task has required inputs.")
+            case (None, None) => ()
           }
-
-          val extraArgs: Seq[String] = argumentNames flatMap { argument =>
-            if (!parameters.map(_.getName).contains(argument))
-              Some(argument)
-            else
-              None
-          }
-
-          // Multiple annotations on the same element are supported and work well visually
-          if (missingArgs.nonEmpty)
-            annotationHolder.createErrorAnnotation(
-              psiElement,
-              "Missing required argument(s) for task: " + missingArgs.mkString(", ")
-            )
-
-          if (extraArgs.nonEmpty)
-            annotationHolder.createErrorAnnotation(
-              psiElement,
-              "Unexpected argument(s) for task: " + extraArgs.mkString(", ")
-            )
 
         case None => ()
       }
