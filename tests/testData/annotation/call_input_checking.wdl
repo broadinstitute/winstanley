@@ -9,18 +9,18 @@ workflow my_workflow {
     # No inputs, none provided (correct)
     call no_inputs
 
-    # No inputs, empty scope for input block (highlight)
+    # No inputs, empty scope for input block (error highlight)
     <error descr="Task does not take inputs.">call no_inputs {
 
     }</error>
 
-    # No inputs, empty input list (highlight)
+    # No inputs, empty input list (error highlight)
     # IMO: this one is a bit debatable as to whether it should highlight, since the list IS technically empty (AEN, 2018-07-17)
     <error descr="Task does not take inputs.">call no_inputs {
         input:
     }</error>
 
-    # No inputs, full input block provided (highlight)
+    # No inputs, full input block provided (error highlight)
     <error descr="Task does not take inputs.">call no_inputs {
         input:
             a = "a",
@@ -47,7 +47,7 @@ workflow my_workflow {
             c = false
     }
 
-    # All required inputs provided, plus extraneous (highlight)
+    # All required inputs provided, plus extraneous (error highlight)
     <error descr="Unexpected inputs(s) for task: d">call required_inputs {
         input:
             a = "a",
@@ -56,32 +56,32 @@ workflow my_workflow {
             d = "Zardoz"
     }</error>
 
-    # Wrong input name (highlight; two annotations)
-    <error descr="Missing required inputs(s) for task: a"><error descr="Unexpected inputs(s) for task: aa">call required_inputs {
+    # Wrong input name (error highlight; two annotations)
+    <error descr="Unexpected inputs(s) for task: aa">call required_inputs {
         input:
             aa = "a",
             b = 5,
             c = false
-    }</error></error>
-
-    # No input block (highlight)
-    <error descr="Task has required inputs.">call required_inputs</error>
-
-    # Empty input scope (highlight)
-    <error descr="Missing required inputs(s) for task: a, b, c">call required_inputs {
-
     }</error>
 
-    # Empty input list (highlight)
-    <error descr="Missing required inputs(s) for task: a, b, c">call required_inputs {
+    # No input block (warning highlight)
+    <weak_warning descr="Unsupplied input(s) 'a', 'b', 'c' must be assigned here or, if this is the root workflow, provided in the inputs JSON.">call required_inputs</weak_warning>
+
+    # Empty input scope (warning highlight)
+    <weak_warning descr="Unsupplied input(s) 'a', 'b', 'c' must be assigned here or, if this is the root workflow, provided in the inputs JSON.">call required_inputs {
+
+    }</weak_warning>
+
+    # Empty input list (warning highlight)
+    <weak_warning descr="Unsupplied input(s) 'a', 'b', 'c' must be assigned here or, if this is the root workflow, provided in the inputs JSON.">call required_inputs {
         input:
-    }</error>
+    }</weak_warning>
 
-    # Missing inputs (highlight)
-    <error descr="Missing required inputs(s) for task: b, c">call required_inputs {
+    # Missing inputs (warning highlight)
+    <weak_warning descr="Unsupplied input(s) 'b', 'c' must be assigned here or, if this is the root workflow, provided in the inputs JSON.">call required_inputs {
         input:
             a = "a"
-    }</error>
+    }</weak_warning>
 
 
     # === DEFAULT AND OPTIONAL INPUTS ===
@@ -152,9 +152,7 @@ workflow my_workflow {
     }
 }
 
-task required_inputs {
-    runtime { docker: "dummy runtime" }
-
+task <weak_warning descr="Non-portable task section: add a runtime section specifying a docker image">required_inputs</weak_warning> {
     input {
         String a
         Int b

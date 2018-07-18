@@ -91,10 +91,12 @@ class WdlAnnotator extends Annotator {
               compareInputListsForCall(psiElement, annotationHolder, callInput, taskInputSection)
             case (Some(_), None) =>
               annotationHolder.createErrorAnnotation(psiElement, "Task does not take inputs.")
-            case (None, Some(_)) =>
-              // TODO: we could show the whole input list as missing, but a much nicer way would be to
-              // provide a "fix me" suggestion that autofills the entire input block
-              annotationHolder.createErrorAnnotation(psiElement, "Task has required inputs.")
+            case (None, Some(taskInputSection)) =>
+              val missingArgs = taskInputSection.getInputBlock.getDeclarationList.asScala.map(_.getName)
+              annotationHolder.createWeakWarningAnnotation(
+                psiElement,
+                "Unsupplied input(s) " + missingArgs.map("\'" + _ + "\'").mkString(", ") + " must be assigned here or, if this is the root workflow, provided in the inputs JSON."
+              )
             case (None, None) => ()
           }
 
@@ -127,9 +129,9 @@ class WdlAnnotator extends Annotator {
 
     // Multiple annotations on the same element are supported and work well visually
     if (missingArgs.nonEmpty)
-      annotationHolder.createErrorAnnotation(
+      annotationHolder.createWeakWarningAnnotation(
         psiElement,
-        "Missing required inputs(s) for task: " + missingArgs.mkString(", ")
+        "Unsupplied input(s) " + missingArgs.map("\'" + _ + "\'").mkString(", ") + " must be assigned here or, if this is the root workflow, provided in the inputs JSON."
       )
 
     val extraArgs: Seq[String] = argumentNames flatMap { argument =>
