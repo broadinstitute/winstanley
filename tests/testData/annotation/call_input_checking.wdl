@@ -93,7 +93,7 @@ workflow my_workflow {
             c = false
     }</error>
 
-    # Duplicate input and missing input (error highlight; trumps unsupplied input warning)
+    # Duplicate input and unsupplied input (error highlight; trumps unsupplied input warning)
     <error descr="Repeated input 'a'">call required_inputs {
         input:
             a = "a",
@@ -114,7 +114,7 @@ workflow my_workflow {
         input:
     }</weak_warning>
 
-    # Missing inputs (warning highlight)
+    # Unsupplied inputs (warning highlight)
     <weak_warning descr="Unsupplied input(s) 'b', 'c' must be assigned here or, if this is the root workflow, provided in the inputs JSON.">call required_inputs {
         input:
             a = "a"

@@ -112,12 +112,12 @@ class WdlAnnotator extends Annotator {
 
   private def compareInputListsForCall(psiElement: PsiElement, annotationHolder: AnnotationHolder, callInput: WdlCallInput, taskInputSection: WdlTaskSection) = {
     // In the interest of unambiguous naming, this method (ab)uses the formal definitions of parameter (declared on method) and argument (passed to method)
-    val arguments: List[WdlMapping] = callInput.getMappingList.asScala.toList
-    val argumentNames = arguments.map(_.getNode.getText.split(Array(' ', '=')).head)
+    val callArgumentMappings: List[WdlMapping] = callInput.getMappingList.asScala.toList
+    val callArguments = callArgumentMappings.map(_.getNode.getText.split(Array(' ', '=')).head)
 
     // Check duplicate arguments
-    val distinctArguments = argumentNames.distinct
-    val duplicateArgumentInstances = argumentNames diff distinctArguments // For args ['a', 'b', 'c', 'c', 'c'] this is ['c', 'c']
+    val distinctArguments = callArguments.distinct
+    val duplicateArgumentInstances = callArguments diff distinctArguments // For args ['a', 'b', 'c', 'c', 'c'] this is ['c', 'c']
     val duplicateArguments = duplicateArgumentInstances.distinct          // ['c', 'c'] -> ['c']
 
     duplicateArguments map { argument =>
@@ -133,7 +133,7 @@ class WdlAnnotator extends Annotator {
       if (parameter.getTypeE.getText.endsWith("?") || parameter.getSetter != null) {
         None
       } else {
-        if (!argumentNames.contains(parameter.getName))
+        if (!callArguments.contains(parameter.getName))
           Some(parameter.getName)
         else
           None
@@ -147,7 +147,7 @@ class WdlAnnotator extends Annotator {
         "Unsupplied input(s) " + missingArgs.map("\'" + _ + "\'").mkString(", ") + " must be assigned here or, if this is the root workflow, provided in the inputs JSON."
       )
 
-    val extraArgs: Seq[String] = argumentNames flatMap { argument =>
+    val extraArgs: Seq[String] = callArguments flatMap { argument =>
       if (!parameters.map(_.getName).contains(argument))
         Some(argument)
       else
