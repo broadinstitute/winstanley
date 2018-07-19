@@ -79,29 +79,31 @@ class WdlAnnotator extends Annotator {
         tasksInScope.find(_.getTaskDeclaration.getName == taskName)
       }
 
-      taskForCall(callBlock) match {
-        case Some(task) =>
-          // The "type" of a WdlTaskSection is determined by which one of its getXXX() methods returns not-null. Checkmate, Scala nerds.
-          val maybeTaskInputSection: Option[WdlTaskSection] = task.getTaskSectionList.asScala.find(_.getInputBlock != null)
+      if (psiElement.getWdlFileElement.isInstanceOf[WdlVersion10File]) {
+        taskForCall(callBlock) match {
+          case Some(task) =>
+            // The "type" of a WdlTaskSection is determined by which one of its getXXX() methods returns not-null. Checkmate, Scala nerds.
+            val maybeTaskInputSection: Option[WdlTaskSection] = task.getTaskSectionList.asScala.find(_.getInputBlock != null)
 
-          val maybeCallInput: Option[WdlCallInput] = Option(callBlock.getCallInput)
+            val maybeCallInput: Option[WdlCallInput] = Option(callBlock.getCallInput)
 
-          (maybeCallInput, maybeTaskInputSection) match {
-            case (Some(callInput), Some(taskInputSection)) =>
-              compareInputListsForCall(psiElement, annotationHolder, callInput, taskInputSection)
-            case (Some(_), None) =>
-              annotationHolder.createErrorAnnotation(psiElement, "Task does not take inputs.")
-            case (None, Some(taskInputSection)) =>
-              // Missing args = all args
-              val missingArgs = taskInputSection.getInputBlock.getDeclarationList.asScala.map(_.getName)
-              annotationHolder.createWeakWarningAnnotation(
-                psiElement,
-                "Unsupplied input(s) " + missingArgs.map("\'" + _ + "\'").mkString(", ") + " must be assigned here or, if this is the root workflow, provided in the inputs JSON."
-              )
-            case (None, None) => ()
-          }
+            (maybeCallInput, maybeTaskInputSection) match {
+              case (Some(callInput), Some(taskInputSection)) =>
+                compareInputListsForCall(psiElement, annotationHolder, callInput, taskInputSection)
+              case (Some(_), None) =>
+                annotationHolder.createErrorAnnotation(psiElement, "Task does not take inputs.")
+              case (None, Some(taskInputSection)) =>
+                // Missing args = all args
+                val missingArgs = taskInputSection.getInputBlock.getDeclarationList.asScala.map(_.getName)
+                annotationHolder.createWeakWarningAnnotation(
+                  psiElement,
+                  "Unsupplied input(s) " + missingArgs.map("\'" + _ + "\'").mkString(", ") + " must be assigned here or, if this is the root workflow, provided in the inputs JSON."
+                )
+              case (None, None) => ()
+            }
 
-        case None => ()
+          case None => ()
+        }
       }
     case _ => ()
   }
