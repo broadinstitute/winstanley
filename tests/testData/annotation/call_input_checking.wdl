@@ -73,7 +73,7 @@ workflow my_workflow {
             c = false
     }</error>
 
-    # TWO duplicate inputs (error highlight)
+    # TWO duplicate inputs (two error highlights)
     <error descr="Repeated input 'a'"><error descr="Repeated input 'b'">call required_inputs {
         input:
             a = "a",
