@@ -92,6 +92,7 @@ class WdlAnnotator extends Annotator {
             case (Some(_), None) =>
               annotationHolder.createErrorAnnotation(psiElement, "Task does not take inputs.")
             case (None, Some(taskInputSection)) =>
+              // Missing args = all args
               val missingArgs = taskInputSection.getInputBlock.getDeclarationList.asScala.map(_.getName)
               annotationHolder.createWeakWarningAnnotation(
                 psiElement,
@@ -113,6 +114,18 @@ class WdlAnnotator extends Annotator {
     // In the interest of unambiguous naming, this method (ab)uses the formal definitions of parameter (declared on method) and argument (passed to method)
     val arguments: List[WdlMapping] = callInput.getMappingList.asScala.toList
     val argumentNames = arguments.map(_.getNode.getText.split(Array(' ', '=')).head)
+
+    // Check duplicate arguments
+    val distinctArguments = argumentNames.distinct
+    val duplicateArgumentInstances = argumentNames diff distinctArguments // For args ['a', 'b', 'c', 'c', 'c'] this is ['c', 'c']
+    val duplicateArguments = duplicateArgumentInstances.distinct          // ['c', 'c'] -> ['c']
+
+    duplicateArguments map { argument =>
+      annotationHolder.createErrorAnnotation(
+        psiElement,
+        "Repeated input \'" + argument + "\'"
+      )
+    }
 
     val parameters: Seq[WdlDeclaration] = taskInputSection.getInputBlock.getDeclarationList.asScala
 

@@ -47,7 +47,7 @@ workflow my_workflow {
             c = false
     }
 
-    # All required inputs provided, plus extraneous (error highlight)
+    # All required inputs provided, plus one extraneous (error highlight)
     <error descr="Unexpected inputs(s) for task: d">call required_inputs {
         input:
             a = "a",
@@ -56,11 +56,48 @@ workflow my_workflow {
             d = "Zardoz"
     }</error>
 
-    # Wrong input name (error highlight; two annotations)
+    # Wrong input name (error highlight; trumps unsupplied input warning)
     <error descr="Unexpected inputs(s) for task: aa">call required_inputs {
         input:
             aa = "a",
             b = 5,
+            c = false
+    }</error>
+
+    # Duplicate input (error highlight)
+    <error descr="Repeated input 'a'">call required_inputs {
+        input:
+            a = "a",
+            a = "a",
+            b = 5,
+            c = false
+    }</error>
+
+    # TWO duplicate inputs (error highlight)
+    <error descr="Repeated input 'a'"><error descr="Repeated input 'b'">call required_inputs {
+        input:
+            a = "a",
+            a = "a",
+            b = 5,
+            b = 5,
+            c = false
+    }</error></error>
+
+    # Triplicate input (error highlight)
+    <error descr="Repeated input 'a'">call required_inputs {
+        input:
+            a = "a",
+            a = "a",
+            a = "a",
+            b = 5,
+            c = false
+    }</error>
+
+    # Duplicate input and missing input (error highlight; trumps unsupplied input warning)
+    <error descr="Repeated input 'a'">call required_inputs {
+        input:
+            a = "a",
+            a = 5,
             c = false
     }</error>
 
@@ -152,7 +189,10 @@ workflow my_workflow {
     }
 }
 
-task <weak_warning descr="Non-portable task section: add a runtime section specifying a docker image">required_inputs</weak_warning> {
+task required_inputs {
+
+    runtime { docker: "dummy runtime" }
+
     input {
         String a
         Int b
@@ -233,4 +273,3 @@ task my_task_default_and_optional {
         Int dummy_output = 1
     }
 }
-
