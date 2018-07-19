@@ -2,7 +2,7 @@
 
 workflow my_workflow {
 
-    # Duplicate input (correct; would be an error highlight in 1.0)
+    # Duplicate input (no annotation; would be an error highlight in 1.0)
     call required_inputs {
         input:
             a = "a",
@@ -11,7 +11,7 @@ workflow my_workflow {
             c = false
     }
 
-    # Unsupplied inputs (correct; woudl be a warning highlight in 1.0)
+    # Unsupplied inputs (no annotation; would be a warning highlight in 1.0)
     call required_inputs {
         input:
             a = "a"

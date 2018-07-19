@@ -6,7 +6,7 @@ workflow my_workflow {
 
     # === NO INPUTS ===
 
-    # No inputs, none provided (correct)
+    # No inputs, none provided (no annotation)
     call no_inputs
 
     # No inputs, empty scope for input block (error highlight)
@@ -31,7 +31,7 @@ workflow my_workflow {
 
     # === REQUIRED INPUTS ===
 
-    # Required inputs provided (correct)
+    # Required inputs provided (no annotation)
     call required_inputs {
          input:
             a = "a",
@@ -39,7 +39,7 @@ workflow my_workflow {
             c = false
     }
 
-    # Required inputs provided, reordered (correct)
+    # Required inputs provided, reordered (no annotation)
     call required_inputs {
         input:
             b = 5,
@@ -123,14 +123,14 @@ workflow my_workflow {
 
     # === DEFAULT AND OPTIONAL INPUTS ===
 
-    # Omit optional input (correct)
+    # Omit optional input (no annotation)
     call my_task_optional {
         input:
             a = "a",
             b = 5
     }
 
-    # Include optional input (correct)
+    # Include optional input (no annotation)
     call my_task_optional {
         input:
             a = "a",
@@ -138,14 +138,14 @@ workflow my_workflow {
             c = false
     }
 
-    # Omit default input (correct)
+    # Omit default input (no annotation)
     call my_task_default {
         input:
             a = "a",
             b = 5
     }
 
-    # Include default input (correct)
+    # Include default input (no annotation)
     call my_task_default {
         input:
             a = "a",
@@ -153,14 +153,14 @@ workflow my_workflow {
             c = false
     }
 
-    # Omit default & optional input (correct)
+    # Omit default & optional input (no annotation)
     call my_task_default_and_optional {
         input:
             a = "a",
             b = 5
     }
 
-    # Include default & optional input (correct)
+    # Include default & optional input (no annotation)
     call my_task_default_and_optional {
         input:
             a = "a",
@@ -170,7 +170,7 @@ workflow my_workflow {
 
     # === ERRATA ===
 
-    # We do not yet validate imports (correct)
+    # We do not yet validate imports (no annotation)
     # See https://github.com/broadinstitute/winstanley/issues/63
     call nonexistent_import.import_task {
         input:
@@ -179,7 +179,7 @@ workflow my_workflow {
             c = false
     }
 
-    # We do not yet check types (correct)
+    # We do not yet check types (no annotation)
     # See https://github.com/broadinstitute/winstanley/issues/37
     call required_inputs {
          input:
