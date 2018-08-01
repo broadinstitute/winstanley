@@ -12,7 +12,7 @@
 
   <change-notes><![CDATA[
   0.4:
-    - Highlight missing, mis-named, and extraneous inputs at call sites (WDL 1.0 only)
+    - Highlight missing, misspelled, and extraneous inputs at call sites (WDL 1.0 only)
   0.3.3:
     - Fixed an issue that caused variables named "version" to be incorrectly flagged as errors
   0.3.2:
