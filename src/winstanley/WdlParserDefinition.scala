@@ -45,7 +45,7 @@ class WdlParserDefinition extends ParserDefinition {
 
   def createFile(viewProvider: FileViewProvider): PsiFile = new WdlFile(viewProvider)
 
-  override def spaceExistanceTypeBetweenTokens(left: ASTNode, right: ASTNode): SpaceRequirements = SpaceRequirements.MAY
+  override def spaceExistenceTypeBetweenTokens(left: ASTNode, right: ASTNode): SpaceRequirements = SpaceRequirements.MAY
 
   @NotNull
   def createElement(node: ASTNode): PsiElement = WdlTypes.Factory.createElement(node)
