@@ -33,20 +33,20 @@ class WdlParserDefinition extends ParserDefinition {
   override def getWhitespaceTokens: TokenSet = WdlParserDefinition.WHITE_SPACES
 
   @NotNull
-  def getCommentTokens: TokenSet = WdlParserDefinition.COMMENTS
+  override def getCommentTokens: TokenSet = WdlParserDefinition.COMMENTS
 
   @NotNull
-  def getStringLiteralElements: TokenSet = TokenSet.EMPTY
+  override def getStringLiteralElements: TokenSet = TokenSet.EMPTY
 
   @NotNull
-  def createParser(project: Project): PsiParser = new WdlParser()
+  override def createParser(project: Project): PsiParser = new WdlParser()
 
   override def getFileNodeType: IFileElementType = WdlParserDefinition.FILE
 
-  def createFile(viewProvider: FileViewProvider): PsiFile = new WdlFile(viewProvider)
+  override def createFile(viewProvider: FileViewProvider): PsiFile = new WdlFile(viewProvider)
 
   override def spaceExistenceTypeBetweenTokens(left: ASTNode, right: ASTNode): SpaceRequirements = SpaceRequirements.MAY
 
   @NotNull
-  def createElement(node: ASTNode): PsiElement = WdlTypes.Factory.createElement(node)
+  override def createElement(node: ASTNode): PsiElement = WdlTypes.Factory.createElement(node)
 }
