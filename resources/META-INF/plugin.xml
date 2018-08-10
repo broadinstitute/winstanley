@@ -11,41 +11,83 @@
     ]]></description>
 
   <change-notes><![CDATA[
-  0.4:
-    - Highlight missing, misspelled, and extraneous inputs at call sites (WDL 1.0 only)
-  0.3.3:
-    - Fixed an issue that caused variables named "version" to be incorrectly flagged as errors
-  0.3.2:
-    - Allows "version 1.0" as a version alias of "version draft-3"
-    - Adds more nudges towards best practices
-    - Warnings on draft-2 / 1.0 differences
-    - Fixes an incorrect error highlight
-  0.3.1:
-    - Bug fixes in draft 3 support
-  0.3:
-    - Initial WDL Draft 3 support
-  0.2:
-    - Go to declarations added from calls to tasks
-    - Go to declarations added from call outputs to calls
-    - More bug fixes
-  0.1.10:
-    - Added support for optional-optional type parsing (eg Int??)
-    - Stopped error messages occurring for empty text ranges.
-  0.1.9:
-    - Fixed a bug that caused duplicate closing braces to appear.
-    - Fixed a bug that failed reference-lookup for outputs referencing other outputs
-  0.1.8:
-    - Added brace matching support.
-    - Added auto-commenting/uncommenting.
-    - Added foldable sections in the WDL editor.
-    - Added support for pair literals.
-    - Added undeclared value detection.
-    - Added "Go to declaration" (for declared variables only).
-  0.1.7:
-    - Added support for if/then/else expression.
-    - Added support for "default=" and "true= false=" sections in command blocks.
-    - Updated the .wdl icon to be less offensive in IntelliJ's "default" theme.
-    - Allows multiple consecutive member or array accesses (eg 'foo = bar[0].out[2]')
+  <ul>
+    <li>
+      0.4
+      <ul>
+        <li>Highlight missing, misspelled, and extraneous inputs at call sites (WDL 1.0 only)</li>
+      </ul>
+    </li>
+    <li>
+      0.3.3
+      <ul>
+        <li>Fixed an issue that caused variables named "version" to be incorrectly flagged as errors</li>
+      </ul>
+    </li>
+    <li>
+      0.3.2
+      <ul>
+        <li>Allows "version 1.0" as a version alias of "version draft-3"</li>
+        <li>Adds more nudges towards best practices</li>
+        <li>Warnings on draft-2 / 1.0 differences</li>
+        <li>Fixes an incorrect error highlight</li>
+      </ul>
+    </li>
+    <li>
+      0.3.1
+      <ul>
+        <li>Bug fixes in draft 3 support</li>
+      </ul>
+    </li>
+    <li>
+      0.3
+      <ul>
+        <li>Initial WDL Draft 3 support</li>
+      </ul>
+    </li>
+    <li>
+      0.2
+      <ul>
+        <li>Go to declarations added from calls to tasks</li>
+        <li>Go to declarations added from call outputs to calls</li>
+        <li>More bug fixes</li>
+      </ul>
+    </li>
+    <li>
+      0.1.10
+      <ul>
+        <li>Added support for optional-optional type parsing (eg Int??)</li>
+        <li>Stopped error messages occurring for empty text ranges.</li>
+      </ul>
+    </li>
+    <li>
+      0.1.9
+      <ul>
+        <li>Fixed a bug that caused duplicate closing braces to appear.</li>
+        <li>Fixed a bug that failed reference-lookup for outputs referencing other outputs</li>
+      </ul>
+    </li>
+    <li>
+      0.1.8
+      <ul>
+        <li>Added brace matching support.</li>
+        <li>Added auto-commenting/uncommenting.</li>
+        <li>Added foldable sections in the WDL editor.</li>
+        <li>Added support for pair literals.</li>
+        <li>Added undeclared value detection.</li>
+        <li>Added "Go to declaration" (for declared variables only).</li>
+      </ul>
+    </li>
+    <li>
+      0.1.7
+      <ul>
+        <li>Added support for if/then/else expression.</li>
+        <li>Added support for "default=" and "true= false=" sections in command blocks.</li>
+        <li>Updated the .wdl icon to be less offensive in IntelliJ's "default" theme.</li>
+        <li>Allows multiple consecutive member or array accesses (eg 'foo = bar[0].out[2]')</li>
+      </ul>
+    </li>
+  </ul>
     ]]>
   </change-notes>
 
