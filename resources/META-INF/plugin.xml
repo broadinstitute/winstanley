@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>org.broadinstitute.winstanley</id>
   <name>Winstanley WDL</name>
-  <version>0.4</version>
+  <version>0.4.1</version>
   <vendor email="workflow-description-language@googlegroups.com">WDL at Broad Institute</vendor>
 
   <description><![CDATA[
@@ -12,6 +12,12 @@
 
   <change-notes><![CDATA[
   <ul>
+    <li>
+      0.4.1
+      <ul>
+        <li>Allows and highlights WDL with a 'version development' declaration, but treats it like 1.0 for now</li>
+      </ul>
+    </li>
     <li>
       0.4
       <ul>
