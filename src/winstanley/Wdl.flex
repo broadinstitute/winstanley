@@ -92,7 +92,7 @@ ATTR_DEFAULT="default"
 ATTR_TRUE="true="|"true ="
 ATTR_FALSE="false="|"false ="
 VERSION="version"
-VERSION_IDENTIFIER="draft-3"|"1.0"
+VERSION_IDENTIFIER="draft-3"|"1.0"|"development"
 STRUCT="struct"
 NULL="null"
 
