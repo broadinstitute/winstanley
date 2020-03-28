@@ -1,9 +1,8 @@
 package winstanley.references
 
-import javax.annotation.Nullable
-
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.{PsiElement, PsiReferenceBase}
+import org.jetbrains.annotations.Nullable
 import winstanley.psi.WdlCallableLookup
 import winstanley.structure.WdlImplicits._
 

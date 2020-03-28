@@ -65,7 +65,7 @@ command_var_option ::= command_var_option_sep|command_var_option_default|command
 
 task_outputs ::= OUTPUT LBRACE output_kv* RBRACE
 output_kv ::= type_e IDENTIFIER EQUAL expression {mixin="winstanley.psi.impl.WdlNamedElementImpl" implements="winstanley.psi.WdlNamedElement" methods=[getName getNameIdentifier setName]}
-runtime_block ::= RUNTIME map
+runtime_block ::= RUNTIME LBRACE kv* RBRACE
 
 parameter_meta_block ::= PARAMETER_META LBRACE meta_kv* RBRACE
 meta_block ::= META LBRACE meta_kv* RBRACE

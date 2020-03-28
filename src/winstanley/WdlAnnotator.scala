@@ -31,7 +31,7 @@ class WdlAnnotator extends Annotator {
       if (!task.getTaskSectionList.asScala.exists(section => Option(section.getTaskOutputs).isDefined)) {
         annotationHolder.createWeakWarningAnnotation(task.getTaskDeclaration.getNameIdentifier.getTextRange, "Suspicious lack of task outputs (is this task really idempotent and portable?)")
       }
-    case runtime: WdlRuntimeBlock if !runtime.getMap.getKvList.asScala.flatMap(kvName).contains("docker") =>
+    case runtime: WdlRuntimeBlock if !runtime.getKvList.asScala.flatMap(kvName).contains("docker") =>
       runtimeKeyword(runtime) foreach { r => annotationHolder.createWeakWarningAnnotation(r.getTextRange, "Non-portable runtime section: specify a docker image") }
     case taskOutputSection: WdlTaskOutputs if taskOutputSection.getOutputKvList.asScala.isEmpty =>
       outputKeyword(taskOutputSection) foreach { r => annotationHolder.createWeakWarningAnnotation(r.getTextRange, "Suspicious lack of task outputs (is this task really idempotent and portable?)") }

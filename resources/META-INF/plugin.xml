@@ -109,6 +109,7 @@
     <lang.braceMatcher language="wdl" implementationClass="winstanley.WdlBraceMatcher"/>
     <lang.commenter language="wdl" implementationClass="winstanley.WdlCommenter"/>
     <lang.foldingBuilder language="wdl" implementationClass="winstanley.WdlFoldingBuilder"/>
+    <lang.formatter language="wdl" implementationClass="winstanley.formatting.WdlFormattingModelBuilder"/>
     <colorSettingsPage implementation="winstanley.WdlColorSettingsPage"/>
     <annotator language="wdl" implementationClass="winstanley.WdlAnnotator"/>
   </extensions>
