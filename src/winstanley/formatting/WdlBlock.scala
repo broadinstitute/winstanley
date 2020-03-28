@@ -34,7 +34,7 @@ class WdlBlock(@NotNull node: ASTNode,
         buildChildrenReversed(blocks, child.getTreeNext, indent)
       } else if (BLOCK_STARTING_ELEMENTS.contains(child.getElementType)) {
         val block = new WdlBlock(child, wrap, alignment, spacingBuilder, indent)
-        buildChildrenReversed(block :: blocks, child.getTreeNext, Indent.getNormalIndent())
+        buildChildrenReversed(block :: blocks, child.getTreeNext, Indent.getNormalIndent)
       } else if (BLOCK_CLOSING_ELEMENTS.contains(child.getElementType)) {
         val block = new WdlBlock(child, wrap, alignment, spacingBuilder, Indent.getNoneIndent)
         buildChildrenReversed(block :: blocks, child.getTreeNext, Indent.getNoneIndent)
