@@ -24,6 +24,7 @@ class WdlSpacingBuilder(@NotNull codeStyleSettings: CodeStyleSettings,
       val right = child2.asInstanceOf[WdlBlock]
 
       val spacingOpt = leftOption map { left =>
+        val needSpace = ELEMENTS_REQUIRING_SPACE_IN_FRONT.contains(right.getNode.getElementType)
         val needBlankLine =
           ELEMENTS_REQUIRING_EMPTY_LINE_IN_FRONT.contains(right.getNode.getElementType) ||
             ELEMENTS_REQUIRING_EMPTY_LINE_AFTER.contains(left.getNode.getElementType)
@@ -31,7 +32,9 @@ class WdlSpacingBuilder(@NotNull codeStyleSettings: CodeStyleSettings,
           ELEMENTS_REQUIRING_NEW_LINE_IN_FRONT.contains(right.getNode.getElementType) ||
             ELEMENTS_REQUIRING_NEW_LINE_AFTER.contains(left.getNode.getElementType)
 
-        if (needBlankLine) {
+        if (needSpace) {
+          ONE_SPACE
+        } else if (needBlankLine) {
           NO_SPACES_NEW_LINE_WITH_BLANK_LINE
         } else if (needNewLine) {
           NO_SPACES_NEW_LINE
@@ -46,8 +49,11 @@ class WdlSpacingBuilder(@NotNull codeStyleSettings: CodeStyleSettings,
     }
   }
 
+  private val ONE_SPACE = Spacing.createSpacing(1, 1, 0, false, 0)
   private val NO_SPACES_NEW_LINE = Spacing.createSpacing(0, 0, 1, false, 1)
   private val NO_SPACES_NEW_LINE_WITH_BLANK_LINE = Spacing.createSpacing(0, 0, 2, false, 1)
+
+  private val ELEMENTS_REQUIRING_SPACE_IN_FRONT = Set(WdlTypes.LBRACE, WdlTypes.COMMAND_DELIMITER_OPEN)
 
   private val ELEMENTS_REQUIRING_NEW_LINE_IN_FRONT =
     Set(
