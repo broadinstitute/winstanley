@@ -67,6 +67,7 @@ class WdlSpacingBuilder(@NotNull codeStyleSettings: CodeStyleSettings,
       WdlTypes.DECLARATION,
       WdlTypes.STRUCT_ENTRY,
       WdlTypes.TASK_SECTION,
+      WdlTypes.MAPPING,
     )
 
   private val ELEMENTS_REQUIRING_EMPTY_LINE_IN_FRONT =
@@ -81,11 +82,9 @@ class WdlSpacingBuilder(@NotNull codeStyleSettings: CodeStyleSettings,
       WdlTypes.LBRACE,
       WdlTypes.COMMAND_DELIMITER_OPEN,
       WdlTypes.TASK_SECTION,
+      WdlTypes.KV,
     )
 
-  private val ELEMENTS_REQUIRING_EMPTY_LINE_AFTER =
-    Set(
-      WdlTypes.VERSION_IDENTIFIER,
-    )
+  private val ELEMENTS_REQUIRING_EMPTY_LINE_AFTER = Set(WdlTypes.VERSION_IDENTIFIER)
 
 }

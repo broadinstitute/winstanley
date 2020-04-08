@@ -38,6 +38,10 @@ class WdlBlock(@NotNull node: ASTNode,
       } else if (BLOCK_CLOSING_ELEMENTS.contains(child.getElementType)) {
         val block = new WdlBlock(child, wrap, alignment, spacingBuilder, Indent.getNoneIndent)
         buildChildrenReversed(block :: blocks, child.getTreeNext, Indent.getNoneIndent)
+      } else if (this.getNode.getElementType == WdlTypes.CALL_INPUT && child.getElementType == WdlTypes.MAPPING) {
+        // special case to handle mappings inside call input block
+        val block = new WdlBlock(child, wrap, alignment, spacingBuilder, Indent.getNormalIndent)
+        buildChildrenReversed(block :: blocks, child.getTreeNext, indent)
       } else {
         val block = new WdlBlock(child, wrap, alignment, spacingBuilder, indent)
         buildChildrenReversed(block :: blocks, child.getTreeNext, indent)
