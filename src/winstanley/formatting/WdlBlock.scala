@@ -1,6 +1,6 @@
 package winstanley.formatting
 
-import com.intellij.formatting.{Spacing, _}
+import com.intellij.formatting._
 import com.intellij.lang.ASTNode
 import com.intellij.psi.formatter.common.AbstractBlock
 import org.jetbrains.annotations.NotNull
